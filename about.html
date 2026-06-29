@@ -1,1 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Core Technologies – About Us</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --teal: #2ec4c4;
+      --teal2: #26b8b8;
+      --dark: #1a1a1a;
+      --mid: #444;
+      --light-gray: #f7f7f7;
+      --text: #333;
+      --text-light: #555;
+      --border-light: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── HERO IMAGE OVERLAY ANIMATION ─── */
+    /*
+      New animation flow (all in one continuous motion):
+      Phase 1 (0 → 40%): Scale down from 100vw/100vh to the image's natural size (360px tall, ~50% width).
+                          Position stays centered on screen during shrink.
+      Phase 2 (40% → 100%): Translate from center of screen to the hero-right column (top-right area).
+                             Simultaneously, the image settles into its exact final slot.
+    */
+    #hero-img-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      overflow: hidden;
+      pointer-events: none;
+      transform-origin: center center;
+      display: none;
+    }
+
+    body.hero-animating #hero-img-overlay {
+      display: block;
+    }
+
+    #hero-img-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /*
+      The overlay starts full-screen (100vw × 100vh) positioned at top:0 left:0.
+      It needs to end up at the hero-right column.
+
+      Hero right column target (approx):
+        - page has 60px padding each side, two equal columns with 60px gap
+        - right column starts at: 60px + 50%*content + 60px/2 = ~50vw + 60px
+        - right column width: ~calc(50vw - 90px)
+        - top of hero section: 64px (nav) + 80px (hero padding-top) + h1 + subtitle + 60px = ~280px
+        - height: 360px
+
+      So target:
+        width  ≈ calc(50vw - 90px)   → let's use a JS-computed approach via CSS custom props
+        height ≈ 360px
+        top    ≈ 280px  (below nav + hero headings)
+        left   ≈ calc(50vw + 30px)
+
+      We animate the overlay element's width/height and top/left.
+      Using CSS @keyframes with calc() and vw/px units for the endpoint.
+    */
+    @keyframes heroShrinkAndMove {
+      /* Full screen */
+      0% {
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        opacity: 1;
+      }
+
+      /* Still full screen, tiny pause to register */
+      5% {
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        opacity: 1;
+      }
+
+      /*
+        Phase 1 end / Phase 2 start (45%):
+        Image has shrunk to its natural size, centered on screen.
+        Natural size: height=360px, width ~ (50vw - 90px) but let's use aspect-matched.
+        We center it: top = 50vh - 180px, left = 50vw - (target_width/2)
+        Using approx target width of calc(45vw - 60px)
+      */
+      45% {
+        top: calc(50vh - 180px);
+        left: calc(50vw - (45vw - 60px) / 2);
+        width: calc(45vw - 60px);
+        height: 360px;
+        border-radius: 2px;
+        opacity: 1;
+      }
+
+      /*
+        Phase 2 end (100%):
+        Image lands in its final slot in the hero-right column.
+        top = 64px (nav) + 80px (hero padding) + ~130px (h1 + subtitle + margin) = ~274px
+        left = calc(50vw + 30px)  (right half of page with 60px padding minus half gap)
+        width = calc(50vw - 90px)
+        height = 360px
+      */
+      100% {
+        top: 274px;
+        left: calc(50vw + 30px);
+        width: calc(50vw - 90px);
+        height: 360px;
+        border-radius: 2px;
+        opacity: 0;
+      }
+    }
+
+    /* Page content fades in during hero animation only */
+    body.hero-animating #page-content {
+      opacity: 0;
+      animation: pageReveal 0.5s ease 1.9s forwards;
+    }
+
+    #page-content {
+      opacity: 1;
+    }
+
+    @keyframes pageReveal {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Hidden until overlay animation completes (revealed via JS) */
+    .hero-right-img {
+      width: 100%;
+      height: 360px;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+      opacity: 1;
+    }
+
+    body.hero-animating .hero-right-img {
+      opacity: 0;
+    }
+
+    .hero-right-img.visible {
+      animation: heroImgSettle 0.35s ease forwards;
+    }
+
+    @keyframes heroImgSettle {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .hero-left.visible {
+      animation: heroLeftReveal 0.5s ease forwards;
+    }
+
+    @keyframes heroLeftReveal {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    body.hero-animating .hero-left {
+      opacity: 0;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-text span:first-child {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--dark);
+      letter-spacing: 1px;
+    }
+
+    .logo-text span:last-child {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 8.5px;
+      color: #888;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #333;
+      text-decoration: none;
+      letter-spacing: .5px;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--teal); }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 80px 60px 0;
+      text-align: center;
+      background: #fff;
+    }
+
+    .hero h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(28px, 4vw, 52px);
+      color: #111;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .hero .subtitle {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: clamp(12px, 1.4vw, 17px);
+      color: #555;
+      letter-spacing: 1.5px;
+      margin-top: 10px;
+    }
+
+    .hero-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      margin-top: 100px;
+      text-align: left;
+      margin-bottom: 150px;
+    }
+
+    .hero-left h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: 1.5px;
+      color: #111;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .hero-left p {
+      font-size: 13.5px;
+      color: var(--text-light);
+      line-height: 1.9;
+      margin-bottom: 32px;
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .focus-item {
+      position: relative;
+    }
+
+    .focus-num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 72px;
+      color: #e8e8e8;
+      line-height: 1;
+      position: absolute;
+      top: -10px;
+      left: -6px;
+      z-index: 0;
+      user-select: none;
+    }
+
+    .focus-content {
+      position: relative;
+      z-index: 1;
+      padding-top: 30px;
+    }
+
+    .focus-content h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #222;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--teal);
+      display: inline-block;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+    }
+
+    .focus-content p {
+      font-size: 12.5px;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* ─── DIVIDER LINE ─── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 0 60px;
+    }
+
+    /* ─── VISION / MISSION / PROCESS ─── */
+    .vmp-section {
+      padding: 80px 60px;
+      background: #fff;
+    }
+
+    .vmp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+
+    .vmp-left { display: flex; flex-direction: column; gap: 60px; }
+
+    .vmp-block h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(28px, 3.5vw, 46px);
+      color: #d5d5d5;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .vmp-block .accent-bar {
+      width: 70px;
+      height: 5px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      margin-bottom: 20px;
+    }
+
+    .vmp-block p {
+      font-size: 13.5px;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .vmp-right h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(28px, 3.5vw, 46px);
+      color: #d5d5d5;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .vmp-right .accent-bar {
+      width: 70px;
+      height: 5px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      margin-bottom: 20px;
+    }
+
+    .vmp-right p {
+      font-size: 13.5px;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    /* ─── CORE VALUES ─── */
+    .values-section {
+      padding: 70px 60px 80px;
+      background: #fff;
+      text-align: center;
+    }
+
+    .core-letters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .core-letter-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 20 20 auto;
+      min-width: 140px;
+      max-width: 260px;
+      opacity: 0;
+    }
+
+    .values-bg-word {
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: clamp(180px, 18vw, 400px);
+      color: #EFEFEF;
+      letter-spacing: 20px;
+      text-transform: uppercase;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      width: 100%;
+      text-align: center;
+    }
+
+    .clipped-letter-container {
+      height: 400px;
+      position: relative;
+      margin-bottom: -35px;
+    }
+
+    .ghost-letter {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 750;
+      font-size: 400px;
+      line-height: 1;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      user-select: none;
+    }
+
+    .ghost-letter.c-bg { background: linear-gradient(135deg, #c0392b, #e74c3c, #f39c12, #8e44ad); -webkit-background-clip: text; background-clip: text; }
+    .ghost-letter.o-bg { background: linear-gradient(135deg, #e84393, #c0392b, #f39c12, #3498db); -webkit-background-clip: text; background-clip: text; }
+    .ghost-letter.r-bg { background: linear-gradient(135deg, #3498db, #8e44ad, #e84393, #c0392b); -webkit-background-clip: text; background-clip: text; }
+    .ghost-letter.e-bg { background: linear-gradient(135deg, #8e44ad, #3498db, #e84393, #2980b9); -webkit-background-clip: text; background-clip: text; }
+
+    .value-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #222;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--teal);
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    .value-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.7;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+
+    /* ─── LEADERSHIP ─── */
+    .leadership-section {
+      padding: 80px 60px;
+      background: #fff;
+    }
+
+    .leader-block {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 40px;
+      align-items: start;
+      padding: 50px 0;
+      border-top: 1px solid #eee;
+      position: relative;
+    }
+
+    .leader-block:last-of-type { border-bottom: 1px solid #eee; }
+
+    .leader-title-bg {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 5vw, 72px);
+      color: #efefef;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      z-index: 0;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .leader-photo {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+      margin-top: 50px;
+    }
+
+    .leader-photo-placeholder {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ccc, #aaa);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      margin-top: 50px;
+    }
+
+    .leader-info { position: relative; z-index: 1; margin-top: 50px; }
+
+    .leader-name-row {
+      margin-bottom: 20px;
+    }
+
+    .leader-role {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--teal);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .leader-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: #111;
+    }
+
+    .accent-bar-sm {
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      margin-top: 8px;
+    }
+
+    .leader-info p {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.85;
+      margin-bottom: 14px;
+    }
+
+    .leader-block.reversed {
+      grid-template-columns: 1fr auto;
+    }
+
+    .leader-block.reversed .leader-info { order: 1; }
+    .leader-block.reversed .leader-photo { order: 2; }
+
+    /* ─── PARTNERSHIPS ─── */
+    .partnerships-section {
+      padding: 60px 60px;
+      background: #fff;
+    }
+
+    .partnerships-section h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .partnerships-section .accent-bar {
+      width: 70px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      margin-bottom: 40px;
+    }
+
+    .partners-logos {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .partner-logo img {
+      height: 80px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .microchip-badge {
+      border: 2px solid #333;
+      padding: 10px 18px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .microchip-badge .mi-v {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 9px;
+      background: #d32f2f;
+      color: #fff;
+      padding: 1px 6px;
+      letter-spacing: 1px;
+    }
+    .microchip-badge .brand {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #d32f2f;
+    }
+    .microchip-badge .design-partner {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 8px;
+      letter-spacing: 2px;
+      background: #333;
+      color: #fff;
+      padding: 2px 6px;
+      width: 100%;
+      text-align: center;
+    }
+    .dt-badge {
+      width: 90px; height: 90px; border-radius: 50%;
+      border: 2px solid #1565c0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #1565c0; padding: 8px; text-align: center;
+    }
+    .dt-badge .member { font-family: 'Montserrat', sans-serif; font-size: 7px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+    .dt-badge .dt-name { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 800; line-height: 1.2; }
+    .dt-badge .dt-sub { font-family: 'Montserrat', sans-serif; font-size: 7px; font-weight: 400; letter-spacing: 1px; }
+    .dt-badge .year { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; margin-top: 4px; }
+    .bca-badge {
+      border: 2px solid #222; padding: 8px 14px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .bca-badge .official { font-family: 'Montserrat', sans-serif; font-size: 7px; font-weight: 600; letter-spacing: 1.5px; color: #555; text-transform: uppercase; margin-bottom: 4px; }
+    .bca-chip-icon { width: 40px; height: 40px; background: #222; display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; padding: 5px; margin-bottom: 6px; }
+    .bca-chip-cell { background: #fff; }
+    .bca-badge .bca-name { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 12px; color: #111; letter-spacing: 1px; text-transform: uppercase; }
+    .bca-badge .bca-sub { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 8px; letter-spacing: 2px; color: #555; text-transform: uppercase; }
+
+    /* ─── DESIGN VALLEY ─── */
+    .design-valley {
+      position: relative;
+      min-height: 340px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .design-valley .dv-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .design-valley .dv-fallback-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a3a5c 100%);
+      z-index: 0;
+    }
+
+    .design-valley .dv-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.52);
+      z-index: 1;
+    }
+
+    .design-valley .dv-text {
+      position: relative;
+      z-index: 2;
+      padding: 60px 40px;
+    }
+
+    .design-valley h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 6vw, 80px);
+      color: #fff;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .design-valley p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: clamp(10px, 1.2vw, 14px);
+      color: rgba(255,255,255,.8);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #111;
+      color: #aaa;
+      padding: 28px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      color: #aaa;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color .2s;
+    }
+
+    .footer-links a:hover { color: var(--teal); }
+
+    .footer-copy {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      color: #666;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 11px; }
+      .hero { padding: 50px 20px 0; }
+      .hero-body { grid-template-columns: 1fr; gap: 30px; }
+      .section-divider { margin: 0 20px; }
+      .vmp-section { padding: 50px 20px; }
+      .vmp-grid { grid-template-columns: 1fr; gap: 30px; }
+      .values-section { padding: 50px 20px; }
+      .leadership-section { padding: 50px 20px; }
+      .leader-block { grid-template-columns: 1fr; }
+      .leader-block.reversed { grid-template-columns: 1fr; }
+      .leader-title-bg { font-size: 32px; }
+      .partnerships-section { padding: 40px 20px; }
+      footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ─── VMP ANIMATIONS ─── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .vmp-animate {
+      opacity: 0;
+    }
+    .vmp-animate.animate-fade-down {
+      animation: fadeInDown 0.8s ease-out forwards;
+    }
+    .vmp-animate.animate-fade-left {
+      animation: fadeInLeft 0.8s ease-out forwards;
+    }
+    .vmp-animate.animate-fade-right {
+      animation: fadeInRight 0.8s ease-out forwards;
+    }
+
+    /* ─── CORE VALUES SLIDE-IN ANIMATION ─── */
+    @keyframes coreSlideUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .core-letter-wrap.animate-core {
+      animation: coreSlideUp 0.6s ease-out forwards;
+    }
+
+    /* ─── REDUCED MOTION ─── */
+    @media (prefers-reduced-motion: reduce) {
+      #hero-img-overlay { animation: none; opacity: 0; }
+      #page-content { animation: none; opacity: 1; }
+      .hero-right-img { animation: none; opacity: 1; }
+      .hero-left { animation: none; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HERO IMAGE OVERLAY ═══════════ -->
+<div id="hero-img-overlay">
+  <img
+    src="https://dicortech.com/assets/images/Team+DesignValley/DCT2024_2.jpg?v=47ca272a84"
+    alt=""
+    onerror="this.parentElement.style.background='linear-gradient(135deg,#1a1a2e,#0f3460)';this.style.display='none';"
+  />
+</div>
+
+<!-- ═══════════ PAGE CONTENT ═══════════ -->
+<div id="page-content">
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg class="logo-icon" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="12" width="12" height="12" fill="#00bcd4"/>
+      <rect x="14" y="2" width="12" height="12" fill="#4caf50"/>
+      <rect x="14" y="24" width="12" height="12" fill="#2196f3"/>
+      <rect x="26" y="12" width="12" height="12" fill="#e91e63"/>
+    </svg>
+    <div class="logo-text">
+      <span>DIGITAL CORE</span>
+      <span>TECHNOLOGIES</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#">Hardware</a></li>
+    <li><a href="#">Software</a></li>
+    <li><a href="#">Logicware</a></li>
+    <li><a href="#">Manufacturing Support</a></li>
+    <li><a href="#">Core Modules</a></li>
+    <li><a href="#">About Us</a></li>
+    <li><a href="#">CSR</a></li>
+    <li><a href="#">News</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <h1>Digital Core Technologies</h1>
+  <p class="subtitle">A Trusted Design Partner For All Electronics Product Development Needs</p>
+
+  <div class="hero-body">
+    <div class="hero-left">
+      <h2>10 Years of Global Success</h2>
+      <p>Digital Core Technologies was incorporated in July 2014 with the objective of producing Top-Tier Electronic Product Design Professionals and High Quality Electronic Product Designs. Over the last decade, we have successfully delivered innovative electronic product design solutions to partners across the globe, from Europe, USA, Japan and India with a core focus on:</p>
+
+      <div class="focus-grid">
+        <div class="focus-item">
+          <div class="focus-num">01</div>
+          <div class="focus-content">
+            <h3>'Quality by Design'</h3>
+            <p>In every endeavor we pursuit. We wish to see India as the 'Go-to-Place' for developing High Technology Embedded System applications in all its aspects.</p>
+          </div>
+        </div>
+        <div class="focus-item">
+          <div class="focus-num">02</div>
+          <div class="focus-content">
+            <h3>'First-Time-Right'</h3>
+            <p>In our product development engagements as well as the ecosystem in terms of the people, processes and methods.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img
+        class="hero-right-img"
+        src="https://dicortech.com/assets/images/Team+DesignValley/DCT2024_2.jpg?v=47ca272a84"
+        alt="Design Valley, Kochi – Digital Core Technologies team"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      />
+      <div style="display:none;width:100%;height:360px;background:linear-gradient(160deg,#1a1a1a 0%,#2a2a2a 50%,#1c2a1c 100%);border-radius:2px;align-items:flex-end;justify-content:center;padding-bottom:20px;">
+        <span style="color:#888;font-size:11px;font-family:'Montserrat',sans-serif;letter-spacing:1px;">DESIGN VALLEY, KOCHI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ VISION / MISSION / PROCESS ═══════════ -->
+<section class="vmp-section">
+  <div class="vmp-grid">
+    <div class="vmp-left">
+      <div class="vmp-block vmp-animate animate-fade-down">
+        <h2>Vision</h2>
+        <div class="accent-bar"></div>
+        <p>Create World Class Designs for Products of the World</p>
+      </div>
+      <div class="vmp-block vmp-animate animate-fade-left">
+        <h2>Mission</h2>
+        <div class="accent-bar"></div>
+        <p>Provide High Quality Designs and High Quality Relationships with Real Life proficiency, Resourceful Agility and Social Responsibility</p>
+      </div>
+    </div>
+
+    <div class="vmp-right vmp-animate animate-fade-right">
+      <h2>Process Philosophy</h2>
+      <div class="accent-bar"></div>
+      <p>To achieve Quality by Design, we follow Our home "Brewed" Requirement Driven Development (RequireD) Methodology, do Requirement Analysis and use UML (Use Case) Models to capture, review/ confirm "Requirement Understanding".</p>
+      <p>We do System (HW, SW &amp; LW) Design using UML Design Models to Capture, Review and Refine Design meeting all the requirements and Build / Implement the Solution following the Design, "Validate" and "Deliver" appropriate solution, meeting Requirements.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CORE VALUES ═══════════ -->
+<section class="values-section" style="position: relative;">
+  <div class="values-bg-word">VALUES</div>
+  <div class="core-letters">
+
+    <div class="core-letter-wrap">
+      <div class="clipped-letter-container">
+        <span class="ghost-letter c-bg">C</span>
+      </div>
+      <div class="value-label">Compassionate</div>
+      <p class="value-desc">To Family, Colleagues, Partners, and "Eco-System"</p>
+    </div>
+
+    <div class="core-letter-wrap">
+      <div class="clipped-letter-container">
+        <span class="ghost-letter o-bg">O</span>
+      </div>
+      <div class="value-label">Objective Oriented</div>
+      <p class="value-desc">Decisions in Projects, Professional dealings, Career, Business</p>
+    </div>
+
+    <div class="core-letter-wrap">
+      <div class="clipped-letter-container">
+        <span class="ghost-letter r-bg">R</span>
+      </div>
+      <div class="value-label">Responsible</div>
+      <p class="value-desc">To Family, Society &amp; Environment, Career &amp; Profession, Project &amp; Clients</p>
+    </div>
+
+    <div class="core-letter-wrap">
+      <div class="clipped-letter-container">
+        <span class="ghost-letter e-bg">E</span>
+      </div>
+      <div class="value-label">Enthusiastic</div>
+      <p class="value-desc">In Everything We Do</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ LEADERSHIP ═══════════ -->
+<section class="leadership-section">
+
+  <div class="leader-block">
+    <div class="leader-title-bg">CEO &amp; MD</div>
+    <img
+      class="leader-photo"
+      src="https://dicortech.com/assets/images/Team+DesignValley/Thomas.png?v=47ca272a84"
+      alt="S Thomas – CEO & MD"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+    />
+    <div class="leader-photo-placeholder" style="display:none;">ST</div>
+    <div class="leader-info">
+      <div class="leader-name-row">
+        <div class="leader-role">CEO &amp; MD</div>
+        <div class="leader-name">S Thomas</div>
+        <div class="accent-bar-sm"></div>
+      </div>
+      <p>An alumnus of Mysore University (1985) with MTech from IISc, Bangalore (1987) in Electronics Design and Technology, he attended the Executive Development Program in Product, Project and Quality Management from University of Warwick, UK (1995).</p>
+      <p>His expertise in the field of Electronic Product Design and Development comes from his career with Switching R&amp;D of ITI Ltd, Centre for Electronic Design and Technology of India (CEDTI) Calicut, L&amp;T Technology Services and his 5-year tenure as CTO of VVDN Technologies and a 5-year stint in GDA Technologies Inc, California, USA.</p>
+      <p>He made a mark as an academic and renowned teacher, when he headed the Division of Electronics and Communication Engineering for an year, at Cochin University of Science and Technology.</p>
+      <p>He founded Digital Core Technologies in 2014 with the wealth of knowledge and experience in Design &amp; Development, Coaching &amp; Mentoring, Teaching and Consulting.</p>
+    </div>
+  </div>
+
+  <div class="leader-block reversed">
+    <div class="leader-title-bg">Chairman</div>
+    <div class="leader-info">
+      <div class="leader-name-row">
+        <div class="leader-role">Chairman</div>
+        <div class="leader-name">S M Balasubramaniyan</div>
+        <div class="accent-bar-sm"></div>
+      </div>
+      <p>Graduate of College of Engineering, Guindy, Chennai and MTech from IIT, Madras. Did Management studies at IIM, Bangalore.</p>
+      <p>35 years of Professional career in R&amp;D division of ITI Ltd, Bangalore and Wipro Technologies, Bangalore. Comprehensive work experience in Telecom Product development and Product Life cycle management, R&amp;D Services for global clients, Customer management, Product &amp; Process Quality Assurance and Business &amp; operational excellence besides Academia interactions, Board positions in global societies and Key note speak.</p>
+      <p>Current associations are in mentoring start up and young organizations, driving professional societies, Coaching &amp; training and pro-Bono consulting.</p>
+    </div>
+    <img
+      class="leader-photo"
+      src="https://dicortech.com/assets/images/Team+DesignValley/Bala.png?v=47ca272a84"
+      alt="S M Balasubramaniyan – Chairman"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+    />
+    <div class="leader-photo-placeholder" style="display:none;">SMB</div>
+  </div>
+
+</section>
+
+<!-- ═══════════ PARTNERSHIPS ═══════════ -->
+<section class="partnerships-section">
+  <h2>Partnerships &amp; Memberships</h2>
+  <div class="accent-bar"></div>
+
+  <div class="partners-logos">
+    <div class="partner-logo">
+      <img
+        src="https://dicortech.com/assets/images/Logos/Partner_logo-Mi-V-REV.png?v=47ca272a84"
+        alt="Microchip Mi-V Design Partner"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';"
+      />
+      <div class="microchip-badge" style="display:none;">
+        <span class="mi-v">Mi-V</span>
+        <span class="brand">Microchip</span>
+        <div class="design-partner">Design Partner</div>
+      </div>
+    </div>
+
+    <div class="partner-logo">
+      <img
+        src="https://dicortech.com/assets/images/Logos/DTC-badge-2023.png?v=47ca272a84"
+        alt="Digital Twin Consortium Member 2023"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      />
+      <div class="dt-badge" style="display:none;">
+        <div class="member">Member</div>
+        <div class="dt-name">digital<br>twin</div>
+        <div class="dt-sub">consortium™</div>
+        <div class="year">2023</div>
+      </div>
+    </div>
+
+    <div class="partner-logo">
+      <img
+        src="https://dicortech.com/assets/images/Logos/23-0215_BCA Logo englisch_schwarz.png?v=47ca272a84"
+        alt="Bavarian Chips Alliance Official Partner"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      />
+      <div class="bca-badge" style="display:none;">
+        <div class="official">Official Partner of</div>
+        <div class="bca-chip-icon">
+          <div class="bca-chip-cell"></div><div class="bca-chip-cell"></div><div class="bca-chip-cell"></div><div class="bca-chip-cell"></div>
+          <div class="bca-chip-cell"></div><div class="bca-chip-cell" style="background:#222;"></div><div class="bca-chip-cell" style="background:#222;"></div><div class="bca-chip-cell"></div>
+          <div class="bca-chip-cell"></div><div class="bca-chip-cell" style="background:#222;"></div><div class="bca-chip-cell" style="background:#222;"></div><div class="bca-chip-cell"></div>
+          <div class="bca-chip-cell"></div><div class="bca-chip-cell"></div><div class="bca-chip-cell"></div><div class="bca-chip-cell"></div>
+        </div>
+        <div class="bca-name">Bavarian Chips</div>
+        <div class="bca-sub">Alliance</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DESIGN VALLEY ═══════════ -->
+<section class="design-valley">
+  <div class="dv-fallback-bg"></div>
+  <img
+    class="dv-img"
+    src="https://dicortech.com/assets/images/Team+DesignValley/DCT2024_2.jpg?v=47ca272a84"
+    alt="Design Valley Kochi"
+  />
+  <div class="dv-overlay"></div>
+  <div class="dv-text">
+    <h2>Design Valley</h2>
+    <p>Our Very Own Design Center at Kochi, Kerala, India</p>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="footer-links">
+    <a href="https://in.linkedin.com/company/digital-core-technologies-pvt-ltd">LinkedIn</a>
+    <a href="https://twitter.com/dicortech">X</a>
+    <a href="https://www.facebook.com/DICORTECH/">Facebook</a>
+    <a href="https://www.youtube.com/@digitalcoretechnologies">Youtube</a>
+  </div>
+  <div class="footer-copy">© Digital Core Technologies Pvt Ltd, 2024</div>
+</footer>
+
+</div><!-- /#page-content -->
+
+<script>
+  let heroAnimationActive = false;
+  const HERO_SHRINK_DURATION_MS = 3360;
+  const HERO_HOLD_DURATION_MS = 1500;
+  const HERO_MOVE_DURATION_MS = 1400;
+  const HERO_FADE_DURATION_MS = 400;
+  const HERO_ANIM_DURATION_MS =
+    HERO_SHRINK_DURATION_MS + HERO_HOLD_DURATION_MS + HERO_MOVE_DURATION_MS + HERO_FADE_DURATION_MS;
+  const HERO_MOVE_START_MS = HERO_SHRINK_DURATION_MS + HERO_HOLD_DURATION_MS;
+
+  function heroKeyframePct(ms) {
+    return Math.round((ms / HERO_ANIM_DURATION_MS) * 100);
+  }
+
+  function revealHeroLeftText() {
+    const heroLeft = document.querySelector('.hero-left');
+    if (heroLeft) heroLeft.classList.add('visible');
+  }
+
+  function shouldPlayHeroAnimation() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+
+    const hero = document.querySelector('.hero');
+    if (!hero) return window.scrollY < 80;
+
+    const rect = hero.getBoundingClientRect();
+    const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+    if (visibleHeight <= 0) return false;
+
+    const visibilityRatio = visibleHeight / Math.min(rect.height, window.innerHeight);
+    return visibilityRatio >= 0.4;
+  }
+
+  function finishHeroAnimation() {
+    if (!heroAnimationActive) return;
+    heroAnimationActive = false;
+
+    document.body.classList.remove('hero-animating');
+
+    const overlay = document.getElementById('hero-img-overlay');
+    if (overlay) overlay.remove();
+
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.style.opacity = '1';
+      pageContent.style.animation = 'none';
+    }
+
+    const heroImg = document.querySelector('.hero-right-img');
+    if (heroImg) {
+      heroImg.classList.add('visible');
+      heroImg.style.opacity = '1';
+    }
+
+    revealHeroLeftText();
+    const heroLeft = document.querySelector('.hero-left');
+    if (heroLeft) heroLeft.style.opacity = '1';
+  }
+
+  function skipHeroAnimation() {
+    const overlay = document.getElementById('hero-img-overlay');
+    if (overlay) overlay.remove();
+  }
+
+  /*
+    Compute the hero-right image's actual bounding rect after layout,
+    then update the CSS animation keyframes dynamically so the overlay
+    lands precisely on the image slot.
+  */
+  function updateOverlayAnimation() {
+    const img = document.querySelector('.hero-right-img');
+    if (!img) return;
+
+    const rect = img.getBoundingClientRect();
+    const scrollY = window.scrollY;
+    const scrollX = window.scrollX;
+
+    // Document coordinates so the overlay scrolls with the page, not the viewport
+    const targetTop    = rect.top + scrollY;
+    const targetLeft   = rect.left + scrollX;
+    const targetWidth  = rect.width;
+    const targetHeight = rect.height;
+
+    const startTop  = scrollY;
+    const startLeft = scrollX;
+
+    // Mid-point: shrunk to natural size, centered in the current viewport
+    const midTop   = scrollY + (window.innerHeight / 2) - (targetHeight / 2);
+    const midLeft  = scrollX + (window.innerWidth  / 2) - (targetWidth  / 2);
+
+    const shrinkEnd = heroKeyframePct(HERO_SHRINK_DURATION_MS);
+    const moveStart = heroKeyframePct(HERO_MOVE_START_MS);
+    const moveEnd = heroKeyframePct(HERO_MOVE_START_MS + HERO_MOVE_DURATION_MS);
+    const fadeEnd = heroKeyframePct(HERO_ANIM_DURATION_MS - HERO_FADE_DURATION_MS);
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes heroShrinkAndMove {
+        0% {
+          top: ${startTop}px;
+          left: ${startLeft}px;
+          width: ${window.innerWidth}px;
+          height: ${window.innerHeight}px;
+          border-radius: 0;
+          opacity: 1;
+        }
+        5% {
+          top: ${startTop}px;
+          left: ${startLeft}px;
+          width: ${window.innerWidth}px;
+          height: ${window.innerHeight}px;
+          border-radius: 0;
+          opacity: 1;
+        }
+        ${shrinkEnd}% {
+          top: ${midTop}px;
+          left: ${midLeft}px;
+          width: ${targetWidth}px;
+          height: ${targetHeight}px;
+          border-radius: 2px;
+          opacity: 1;
+        }
+        ${moveStart}% {
+          top: ${midTop}px;
+          left: ${midLeft}px;
+          width: ${targetWidth}px;
+          height: ${targetHeight}px;
+          border-radius: 2px;
+          opacity: 1;
+        }
+        ${moveEnd}% {
+          top: ${targetTop}px;
+          left: ${targetLeft}px;
+          width: ${targetWidth}px;
+          height: ${targetHeight}px;
+          border-radius: 2px;
+          opacity: 1;
+        }
+        ${fadeEnd}% {
+          top: ${targetTop}px;
+          left: ${targetLeft}px;
+          width: ${targetWidth}px;
+          height: ${targetHeight}px;
+          border-radius: 2px;
+          opacity: 1;
+        }
+        100% {
+          top: ${targetTop}px;
+          left: ${targetLeft}px;
+          width: ${targetWidth}px;
+          height: ${targetHeight}px;
+          border-radius: 2px;
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Restart the overlay animation so it uses the new keyframes
+    const overlay = document.getElementById('hero-img-overlay');
+    if (overlay) {
+      overlay.style.animation = 'none';
+      overlay.offsetHeight; // reflow
+      overlay.style.animation = '';
+      overlay.style.animation = `heroShrinkAndMove ${HERO_ANIM_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+
+      setTimeout(() => {
+        if (heroAnimationActive) revealHeroLeftText();
+      }, HERO_MOVE_START_MS);
+
+      overlay.addEventListener('animationend', () => {
+        finishHeroAnimation();
+      }, { once: true });
+    }
+  }
+
+  function initHeroAnimation() {
+    if (shouldPlayHeroAnimation()) {
+      heroAnimationActive = true;
+      document.body.classList.add('hero-animating');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(updateOverlayAnimation);
+      });
+    } else {
+      skipHeroAnimation();
+    }
+  }
+
+  function initWhenScrollReady() {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(initHeroAnimation);
+    });
+  }
+
+  // ─── CORE VALUES STAGGERED ANIMATION ───
+  function initCoreAnimations() {
+    const wraps = document.querySelectorAll('.core-letter-wrap');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const els = entry.target.querySelectorAll('.core-letter-wrap');
+            els.forEach((el, i) => {
+              setTimeout(() => el.classList.add('animate-core'), i * 500);
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      const section = document.querySelector('.values-section');
+      if (section) observer.observe(section);
+    } else {
+      wraps.forEach((el, i) => {
+        setTimeout(() => el.classList.add('animate-core'), i * 200);
+      });
+    }
+  }
+
+  // ─── VMP ANIMATIONS ON SCROLL ───
+  function initVmpAnimations() {
+    const els = document.querySelectorAll('.vmp-animate');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const cls = [...el.classList].find(c => c.startsWith('animate-'));
+            if (cls) el.classList.add(cls);
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.2 });
+      els.forEach(el => observer.observe(el));
+    } else {
+      els.forEach(el => {
+        const cls = [...el.classList].find(c => c.startsWith('animate-'));
+        if (cls) el.classList.add(cls);
+      });
+    }
+  }
+
+  if (document.readyState === 'complete') {
+    initWhenScrollReady();
+    initVmpAnimations();
+    initCoreAnimations();
+  } else {
+    window.addEventListener('pageshow', () => {
+      initWhenScrollReady();
+      initVmpAnimations();
+      initCoreAnimations();
+    }, { once: true });
+  }
+</script>
+
+</body>
+</html>
