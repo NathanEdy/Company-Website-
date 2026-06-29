@@ -1,1 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Core Technologies - AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* ─────────────────────────── NAV ─────────────────────────── */
+        nav {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 200;
+            height: 64px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 52px;
+        }
+        .logo-link { display: flex; align-items: center; gap: 11px; text-decoration: none; color: #333; flex-shrink: 0; }
+        .nav-left-section { display: flex; align-items: center; gap: 52px; }
+        .logo-link svg { width: 38px; height: 38px; }
+        .logo-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+        .logo-wordmark .l1 {
+            font-family: 'Barlow', 'Arial Narrow', Arial, sans-serif;
+            font-weight: 700; font-size: 28px;
+            letter-spacing: 0.09em; text-transform: uppercase;
+        }
+        .nav-group { display: flex; align-items: center; gap: 38px; }
+        .nav-group a {
+            font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.025em;
+            color: #333; text-decoration: none; transition: color .2s;
+        }
+        .nav-group a:hover { color: #e6b94a; }
+        .nav-group a.active { color: #e6b94a; font-weight: 600; }
+
+        /* ─────────────────────────── HERO ─────────────────────────── */
+        .hero {
+            position: relative;
+            padding: 144px 60px 60px;
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .hero-bg-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            font-weight: 900;
+            color: rgba(200,200,200,0.2);
+            white-space: nowrap;
+            letter-spacing: 10px;
+            z-index: 0;
+            user-select: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 900;
+            color: #000;
+            display: inline-block;
+            margin-right: 20px;
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInFromLeft 1.2s ease-out forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 48px;
+            font-weight: 300;
+            color: #333;
+            letter-spacing: 3px;
+            display: inline-block;
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInFromLeft 1.2s ease-out 0.3s forwards;
+        }
+
+        .hero-line {
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ffcc00);
+            margin: 30px auto;
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInFromLeft 1.2s ease-out 0.6s forwards;
+        }
+
+        @keyframes slideInFromLeft {
+            0% { opacity: 0; transform: translateX(-150px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ─────────────────────────── PROCESS SECTION ─────────────────────────── */
+        .process-section {
+            padding: 80px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-header {
+            margin-bottom: 60px;
+        }
+
+        .process-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .process-headline {
+            font-size: 42px;
+            font-weight: 900;
+            color: #000;
+            margin-bottom: 15px;
+        }
+
+        .process-headline span {
+            font-weight: 300;
+            color: #555;
+        }
+
+        .process-subtext {
+            font-size: 15px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .process-line {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #0088cc, #00d4aa);
+            margin: 0 auto;
+        }
+
+        /* ─── Steps Container ─── */
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .step-item {
+            flex: 1;
+            max-width: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            opacity: 0;
+            transform: translateY(80px) scale(0.8);
+        }
+
+        /* Spring-up animation with delayed chain reaction */
+        .step-item.animate {
+            animation: springUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .step-item:nth-child(1).animate { animation-delay: 0.1s; }
+        .step-item:nth-child(2).animate { animation-delay: 0.25s; }
+        .step-item:nth-child(3).animate { animation-delay: 0.4s; }
+        .step-item:nth-child(4).animate { animation-delay: 0.55s; }
+        .step-item:nth-child(5).animate { animation-delay: 0.7s; }
+        .step-item:nth-child(6).animate { animation-delay: 0.85s; }
+        .step-item:nth-child(7).animate { animation-delay: 1.0s; }
+
+        @keyframes springUp {
+            0% {
+                opacity: 0;
+                transform: translateY(80px) scale(0.8);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1.05);
+            }
+            80% {
+                transform: translateY(5px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Step number ring */
+        .step-ring {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #00a8a8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 20px rgba(0,168,168,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-item:hover .step-ring {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0,168,168,0.3);
+        }
+
+        .step-number {
+            font-family: 'Barlow', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: #00a8a8;
+        }
+
+        /* Connecting arc between steps */
+        .step-connector {
+            position: absolute;
+            top: 50px;
+            left: 60%;
+            width: calc(100% + 20px);
+            height: 60px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .step-connector svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .step-connector path {
+            fill: none;
+            stroke: #00a8a8;
+            stroke-width: 2;
+            stroke-dasharray: 6 4;
+            opacity: 0.4;
+        }
+
+        /* Step label */
+        .step-label {
+            margin-top: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ─────────────────────────── AI CAPABILITIES ─────────────────────────── */
+        .capabilities-section {
+            padding: 80px 60px;
+            background: #fafafa;
+        }
+
+        .capabilities-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .capabilities-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .capabilities-line {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #0088cc, #00d4aa);
+            margin: 0 auto;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .capability-block {
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .capability-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .capability-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+
+        .capability-accent {
+            width: 120px;
+            height: 20px;
+            background: linear-gradient(90deg, #0088cc, #00d4aa);
+            border-radius: 2px;
+        }
+
+        .capability-list {
+            list-style: none;
+        }
+
+        .capability-list li {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .capability-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #00a8a8;
+            font-weight: bold;
+        }
+
+        .capability-list ul {
+            list-style: none;
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        .capability-list ul li::before {
+            content: '○';
+            font-size: 10px;
+            color: #00a8a8;
+        }
+
+        /* ─────────────────────────── TECH STACK DIAGRAM ─────────────────────────── */
+        .tech-section {
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .tech-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+        }
+
+        .tech-diagram {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 500px;
+        }
+
+        .tech-node {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 2px solid #00a8a8;
+            background: rgba(240,248,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tech-node:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(0,168,168,0.25);
+        }
+
+        .node-1 { left: 5%; top: 10%; }
+        .node-2 { left: 25%; top: 5%; }
+        .node-3 { left: 45%; top: 25%; }
+        .node-4 { left: 55%; top: 0%; }
+        .node-5 { left: 70%; top: 5%; }
+        .node-6 { left: 85%; top: 30%; }
+        .node-7 { left: 70%; top: 55%; }
+        .node-8 { left: 45%; top: 65%; }
+        .node-9 { left: 20%; top: 55%; }
+
+        .tech-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 2px;
+            background: #fff;
+            padding: 5px 10px;
+        }
+
+        .label-1 { left: 15%; top: 35%; }
+        .label-2 { left: 35%; top: 45%; }
+        .label-3 { left: 60%; top: 40%; }
+        .label-4 { left: 75%; top: 50%; }
+
+        .tech-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .tech-lines line {
+            stroke: #00a8a8;
+            stroke-width: 1.5;
+            opacity: 0.6;
+        }
+
+        /* ─────────────────────────── FOOTER ─────────────────────────── */
+        footer {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #e6b94a;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* ─────────────────────────── RESPONSIVE ─────────────────────────── */
+        @media (max-width: 1024px) {
+            .steps-container {
+                flex-wrap: wrap;
+                gap: 30px;
+            }
+            .step-item {
+                max-width: 140px;
+            }
+            .step-connector {
+                display: none;
+            }
+            .capabilities-grid {
+                grid-template-columns: 1fr;
+            }
+            .tech-diagram {
+                height: auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+            .tech-node {
+                position: relative;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+            }
+            .tech-lines, .tech-label {
+                display: none;
+            }
+            .hero-title { font-size: 48px; }
+            .hero-subtitle { font-size: 32px; }
+            .hero-bg-text { font-size: 60px; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 20px; }
+            .nav-group { gap: 20px; }
+            .nav-group a { font-size: 13px; }
+            .hero { padding: 100px 20px 40px; }
+            .process-section { padding: 40px 20px; }
+            .capabilities-section { padding: 40px 20px; }
+            .tech-section { padding: 40px 20px; }
+            .step-item { max-width: 120px; }
+            .step-ring { width: 80px; height: 80px; }
+            .step-number { font-size: 22px; }
+            footer { flex-direction: column; gap: 20px; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+      <div class="nav-left-section">
+        <a href="index.html" class="logo-link" aria-label="NEXSUS Home">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,20 6,12 6,28 20,36" fill="#2d6be4" opacity="0.9"></polygon><polygon points="20,20 34,12 34,28 20,36" fill="#22c5b8" opacity="0.9"></polygon><polygon points="20,4 34,12 20,20 6,12" fill="#a855f7" opacity="0.8"></polygon><line x1="20" y1="4" x2="20" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"></line><line x1="6" y1="12" x2="34" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"></line><line x1="34" y1="12" x2="6" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"></line></svg>
+          <div class="logo-wordmark">
+            <span class="l1">NEXSUS</span>
+          </div>
+        </a>
+        <div class="nav-group" style="gap:48px;">
+          <a href="software.html">Software</a>
+          <a href="#">Data Governance</a>
+          <a href="#">UX</a>
+          <a href="ai.html" class="active">AI</a>
+        </div>
+      </div>
+      <div>
+        <div class="nav-group" style="gap:48px;">
+          <a href="#">Core Modules</a>
+          <a href="#">About Us</a>
+          <a href="#">CSR</a>
+          <a href="#">News</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg-text">MACHINE LEARNING</div>
+        <div class="hero-content">
+            <h1 class="hero-title">AI</h1>
+            <span class="hero-subtitle">INTELLIGENCE & AUTOMATION</span>
+            <div class="hero-line"></div>
+        </div>
+    </section>
+
+    <!-- Process Section with Spring-Up Animation -->
+    <section class="process-section">
+        <div class="process-header">
+            <div class="process-title">End-to-End Product Design</div>
+            <div class="process-headline">HARDWARE <span>DESIGN SERVICES</span></div>
+            <div class="process-subtext">
+                WE OFFER END-TO-END PRODUCT DESIGN AND DEVELOPMENT SUPPORT:<br>
+                From inception to market launch, we provide steadfast support through every stage of your product's journey
+            </div>
+            <div class="process-line"></div>
+        </div>
+
+        <div class="steps-container" id="stepsContainer">
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">01</span>
+                </div>
+                <div class="step-label">Requirement Analysis & Feasibility Study</div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 0 30 Q 50 0 100 30" />
+                    </svg>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">02</span>
+                </div>
+                <div class="step-label">Architecture & Platform Selection</div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 0 30 Q 50 0 100 30" />
+                    </svg>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">03</span>
+                </div>
+                <div class="step-label">Detailed Design & Schematics</div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 0 30 Q 50 0 100 30" />
+                    </svg>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">04</span>
+                </div>
+                <div class="step-label">PCB Layout & Routing</div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 0 30 Q 50 0 100 30" />
+                    </svg>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">05</span>
+                </div>
+                <div class="step-label">Proto Build & Bring-up</div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 0 30 Q 50 0 100 30" />
+                    </svg>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">06</span>
+                </div>
+                <div class="step-label">System Validation & Testing</div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 0 30 Q 50 0 100 30" />
+                    </svg>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-ring">
+                    <span class="step-number">07</span>
+                </div>
+                <div class="step-label">Production & Sustaining Support</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Capabilities Section -->
+    <section class="capabilities-section">
+        <div class="capabilities-header">
+            <div class="capabilities-title">KEY AREAS</div>
+            <div class="capabilities-line"></div>
+        </div>
+
+        <div class="capabilities-grid">
+            <div class="capability-block">
+                <div class="capability-header">
+                    <div class="capability-title">MACHINE LEARNING & DEEP LEARNING</div>
+                    <div class="capability-accent"></div>
+                </div>
+                <ul class="capability-list">
+                    <li>Custom CNN, RNN, LSTM, and Transformer model architectures</li>
+                    <li>Computer Vision – object detection, segmentation, tracking (YOLO, Mask R-CNN)</li>
+                    <li>Natural Language Processing – sentiment analysis, NER, summarization, LLM fine-tuning</li>
+                    <li>Time-series forecasting and anomaly detection</li>
+                    <li>Reinforcement Learning for autonomous systems</li>
+                    <li>Model optimization – quantization, pruning, knowledge distillation</li>
+                    <li>Frameworks: TensorFlow, PyTorch, Keras, ONNX, Hugging Face</li>
+                </ul>
+            </div>
+
+            <div class="capability-block">
+                <div class="capability-header">
+                    <div class="capability-title">EDGE AI & EMBEDDED INFERENCE</div>
+                    <div class="capability-accent"></div>
+                </div>
+                <ul class="capability-list">
+                    <li>Deployment on NVIDIA Jetson, Coral TPU, Intel Movidius, Qualcomm QCS</li>
+                    <li>TensorFlow Lite, ONNX Runtime, OpenVINO, TensorRT optimization</li>
+                    <li>Real-time inference pipelines for low-latency applications</li>
+                    <li>FPGA-based AI acceleration (Xilinx Zynq, PolarFire SoC)</li>
+                    <li>Custom DSP and NPU driver integration</li>
+                    <li>Power-optimized model design for battery-operated devices</li>
+                    <li>Edge-to-cloud hybrid AI architectures</li>
+                </ul>
+            </div>
+
+            <div class="capability-block">
+                <div class="capability-header">
+                    <div class="capability-title">DATA ENGINEERING & MLOPS</div>
+                    <div class="capability-accent"></div>
+                </div>
+                <ul class="capability-list">
+                    <li>Data pipeline design – ingestion, transformation, feature stores</li>
+                    <li>ETL/ELT workflows with Apache Spark, Airflow, dbt</li>
+                    <li>Vector databases – Pinecone, Weaviate, Chroma, FAISS</li>
+                    <li>CI/CD for ML – model versioning, A/B testing, automated retraining</li>
+                    <li>Monitoring and drift detection with MLflow, Weights & Biases</li>
+                    <li>Cloud ML platforms – AWS SageMaker, Azure ML, GCP Vertex AI</li>
+                    <li>Data labeling and synthetic data generation pipelines</li>
+                </ul>
+            </div>
+
+            <div class="capability-block">
+                <div class="capability-header">
+                    <div class="capability-title">GENERATIVE AI & LLMS</div>
+                    <div class="capability-accent"></div>
+                </div>
+                <ul class="capability-list">
+                    <li>LLM integration – OpenAI GPT, Claude, Llama, Mistral, Gemma</li>
+                    <li>RAG (Retrieval-Augmented Generation) system architecture</li>
+                    <li>Prompt engineering and agent-based workflow design</li>
+                    <li>Fine-tuning and LoRA/QLoRA adaptation for domain-specific models</li>
+                    <li>Multimodal AI – vision-language models, text-to-image, audio synthesis</li>
+                    <li>API gateway and cost-optimized inference orchestration</li>
+                    <li>Security and guardrails for enterprise AI deployment</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Expertise Diagram -->
+    <section class="tech-section">
+        <div class="tech-title">TECHNOLOGY EXPERTISE</div>
+        <div class="tech-diagram">
+            <svg class="tech-lines" viewBox="0 0 1200 500">
+                <line x1="130" y1="130" x2="280" y2="100" />
+                <line x1="280" y1="100" x2="500" y2="200" />
+                <line x1="130" y1="130" x2="200" y2="350" />
+                <line x1="200" y1="350" x2="380" y2="400" />
+                <line x1="380" y1="400" x2="500" y2="200" />
+                <line x1="500" y1="200" x2="620" y2="100" />
+                <line x1="620" y1="100" x2="750" y2="80" />
+                <line x1="750" y1="80" x2="900" y2="130" />
+                <line x1="900" y1="130" x2="850" y2="300" />
+                <line x1="850" y1="300" x2="950" y2="250" />
+                <line x1="500" y1="200" x2="650" y2="350" />
+                <line x1="650" y1="350" x2="850" y2="300" />
+            </svg>
+
+            <div class="tech-node node-1">COMPUTER VISION</div>
+            <div class="tech-node node-2">NLP & LLMS</div>
+            <div class="tech-node node-3">EDGE AI</div>
+            <div class="tech-node node-4">GENERATIVE AI</div>
+            <div class="tech-node node-5">MLOPS</div>
+            <div class="tech-node node-6">REINFORCEMENT LEARNING</div>
+            <div class="tech-node node-7">DATA ENGINEERING</div>
+            <div class="tech-node node-8">AI SECURITY</div>
+            <div class="tech-node node-9">CLOUD AI</div>
+
+            <div class="tech-label label-1">AI ECOSYSTEM</div>
+            <div class="tech-label label-2">AI ECOSYSTEM</div>
+            <div class="tech-label label-3">AI ECOSYSTEM</div>
+            <div class="tech-label label-4">AI ECOSYSTEM</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">LinkedIn</a>
+            <a href="#">X</a>
+            <a href="#">Facebook</a>
+            <a href="#">Youtube</a>
+        </div>
+        <div class="footer-copy">&copy; Digital Core Pvt Ltd, 2024</div>
+    </footer>
+
+    <script>
+        // Spring-up chain reaction animation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const steps = document.querySelectorAll('.step-item');
+
+            // Small delay to ensure visual readiness, then trigger animation
+            setTimeout(() => {
+                steps.forEach(step => {
+                    step.classList.add('animate');
+                });
+            }, 300);
+        });
+    </script>
+</body>
+</html>
