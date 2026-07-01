@@ -257,7 +257,7 @@
     .hero {
       padding: 80px 60px 0;
       text-align: center;
-      background: #fff;
+      background: linear-gradient(to right, #F5F5F8 50%, #fff 50%);
     }
 
     .hero h1 {
@@ -286,6 +286,12 @@
       margin-top: 100px;
       text-align: left;
       margin-bottom: 150px;
+    }
+
+    .hero-left {
+      background: #F5F5F8;
+      padding: 30px;
+      border-radius: 8px;
     }
 
     .hero-left h2 {
@@ -376,7 +382,7 @@
 
     .vmp-block h2 {
       font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
+      font-weight: 700;
       font-size: clamp(28px, 3.5vw, 46px);
       color: #d5d5d5;
       letter-spacing: 2px;
@@ -386,10 +392,21 @@
     }
 
     .vmp-block .accent-bar {
-      width: 70px;
-      height: 5px;
-      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      width: 100%;
+      height: 1px;
+      background: #ccc;
+      position: relative;
       margin-bottom: 20px;
+    }
+
+    .vmp-block .accent-bar::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 15%;
+      height: 15px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
     }
 
     .vmp-block p {
@@ -400,7 +417,7 @@
 
     .vmp-right h2 {
       font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
+      font-weight: 700;
       font-size: clamp(28px, 3.5vw, 46px);
       color: #d5d5d5;
       letter-spacing: 2px;
@@ -410,10 +427,21 @@
     }
 
     .vmp-right .accent-bar {
-      width: 70px;
-      height: 5px;
-      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      width: 100%;
+      height: 1px;
+      background: #ccc;
+      position: relative;
       margin-bottom: 20px;
+    }
+
+    .vmp-right .accent-bar::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 15%;
+      height: 15px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
     }
 
     .vmp-right p {
@@ -537,14 +565,54 @@
       top: 40px;
       left: 0;
       font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: clamp(36px, 5vw, 72px);
+      font-weight: 700;
+      font-size: clamp(40px, 12vw, 170px);
       color: #efefef;
-      letter-spacing: 4px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       z-index: 0;
       user-select: none;
       white-space: nowrap;
+      text-align: center;
+    }
+
+    .leader-block.centered .leader-title-bg {
+      left: 53%;
+      transform: translateX(-50%);
+    }
+
+    /* CEO & MD block: header stays on white, paragraph sits on a full-bleed gray band */
+    .leader-block.centered {
+      display: block;
+      padding: 50px 0 0;
+    }
+
+    .leader-block.centered .leader-header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-bottom: 40px;
+    }
+
+    .leader-block.centered .ceo-bg-band {
+      position: relative;
+      background: #F3F3F6;
+      width: calc(100% + 120px);
+      margin: 0 -60px;
+      padding: 70px 60px 50px 270px;
+    }
+
+    .leader-block.centered .leader-photo,
+    .leader-block.centered .leader-photo-placeholder {
+      position: absolute;
+      top: -55px;
+      left: 60px;
+      margin-top: 0;
+    }
+
+    .leader-block.centered .leader-info {
+      text-align: left;
+      margin-top: 0;
     }
 
     .leader-photo {
@@ -578,6 +646,10 @@
 
     .leader-info { position: relative; z-index: 1; margin-top: 50px; }
 
+    .leader-block.centered .leader-info {
+      text-align: center;
+    }
+
     .leader-name-row {
       margin-bottom: 20px;
     }
@@ -595,7 +667,7 @@
     .leader-name {
       font-family: 'Montserrat', sans-serif;
       font-weight: 700;
-      font-size: 22px;
+      font-size: 70px;
       color: #111;
     }
 
@@ -604,6 +676,42 @@
       height: 4px;
       background: linear-gradient(90deg, var(--teal), #1aa8a8);
       margin-top: 8px;
+    }
+
+    .leader-block.centered .accent-bar-sm {
+      width: 40%;
+      height: 1px;
+      background: #ccc;
+      position: relative;
+      margin: 15px auto 0;
+    }
+
+    .leader-block.centered .accent-bar-sm::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 15%;
+      height: 15px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+    }
+
+    .leader-block.reversed .accent-bar-sm {
+      width: 55%;
+      height: 1px;
+      background: #ccc;
+      position: relative;
+      margin: 15px 0 0;
+    }
+
+    .leader-block.reversed .accent-bar-sm::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 15%;
+      height: 15px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
     }
 
     .leader-info p {
@@ -629,7 +737,7 @@
     .partnerships-section h2 {
       font-family: 'Montserrat', sans-serif;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 40px;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: #555;
@@ -637,21 +745,33 @@
     }
 
     .partnerships-section .accent-bar {
-      width: 70px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--teal), #1aa8a8);
+      width: 60%;
+      height: 1px;
+      background: #ccc;
+      position: relative;
       margin-bottom: 40px;
+    }
+
+    .partnerships-section .accent-bar::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 15%;
+      height: 15px;
+      background: linear-gradient(90deg, var(--teal), #1aa8a8);
     }
 
     .partners-logos {
       display: flex;
       align-items: center;
-      gap: 60px;
+      justify-content: center;
+      gap: 450px;
       flex-wrap: wrap;
     }
 
     .partner-logo img {
-      height: 80px;
+      height: 170px;
       width: auto;
       object-fit: contain;
       display: block;
@@ -714,10 +834,10 @@
     /* ─── DESIGN VALLEY ─── */
     .design-valley {
       position: relative;
-      min-height: 340px;
+      min-height: 1000px;
       overflow: hidden;
       display: flex;
-      align-items: center;
+      align-items: top center;
       justify-content: center;
       text-align: center;
     }
@@ -741,7 +861,7 @@
     .design-valley .dv-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,.52);
+      background: hsla(0, 0%, 0%, 0.45);
       z-index: 1;
     }
 
@@ -753,8 +873,8 @@
 
     .design-valley h2 {
       font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: clamp(36px, 6vw, 80px);
+      font-weight: 700;
+      font-size: clamp(36px, 6vw, 100px);
       color: #fff;
       letter-spacing: 6px;
       text-transform: uppercase;
@@ -765,8 +885,8 @@
     .design-valley p {
       font-family: 'Montserrat', sans-serif;
       font-weight: 400;
-      font-size: clamp(10px, 1.2vw, 14px);
-      color: rgba(255,255,255,.8);
+      font-size: clamp(10px, 1.2vw, 26px);
+      color: hwb(240 60% 37%);
       letter-spacing: 3px;
       text-transform: uppercase;
     }
@@ -778,9 +898,10 @@
       padding: 28px 60px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       flex-wrap: wrap;
       gap: 12px;
+      position: relative;
     }
 
     .footer-links {
@@ -788,22 +909,36 @@
       gap: 24px;
     }
 
-    .footer-links a {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 12px;
-      color: #aaa;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color .2s;
-    }
-
-    .footer-links a:hover { color: var(--teal); }
-
     .footer-copy {
       font-family: 'Montserrat', sans-serif;
       font-size: 11px;
-      color: #666;
+      color: #fff;
+      position: absolute;
+      right: 60px;
     }
+
+    .footer-links a {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color .2s;
+      position: relative;
+    }
+
+    .footer-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0;
+      height: 2px;
+      background: #fff;
+      transition: width .2s;
+    }
+
+    .footer-links a:hover::after { width: 100%; }
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
@@ -820,6 +955,15 @@
       .leader-block { grid-template-columns: 1fr; }
       .leader-block.reversed { grid-template-columns: 1fr; }
       .leader-title-bg { font-size: 32px; }
+      .leader-block.centered .ceo-bg-band {
+        width: calc(100% + 40px);
+        margin: 0 -20px;
+        padding: 90px 20px 30px;
+      }
+      .leader-block.centered .leader-photo,
+      .leader-block.centered .leader-photo-placeholder {
+        left: 20px;
+      }
       .partnerships-section { padding: 40px 20px; }
       footer { padding: 20px; flex-direction: column; align-items: flex-start; }
     }
@@ -1021,33 +1165,35 @@
 <!-- ═══════════ LEADERSHIP ═══════════ -->
 <section class="leadership-section">
 
-  <div class="leader-block">
+  <div class="leader-block centered">
     <div class="leader-title-bg">CEO &amp; MD</div>
-    <img
-      class="leader-photo"
-      src="https://dicortech.com/assets/images/Team+DesignValley/Thomas.png?v=47ca272a84"
-      alt="S Thomas – CEO & MD"
-      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-    />
-    <div class="leader-photo-placeholder" style="display:none;">ST</div>
-    <div class="leader-info">
+    <div class="leader-header">
       <div class="leader-name-row">
-        <div class="leader-role">CEO &amp; MD</div>
         <div class="leader-name">S Thomas</div>
         <div class="accent-bar-sm"></div>
       </div>
-      <p>An alumnus of Mysore University (1985) with MTech from IISc, Bangalore (1987) in Electronics Design and Technology, he attended the Executive Development Program in Product, Project and Quality Management from University of Warwick, UK (1995).</p>
-      <p>His expertise in the field of Electronic Product Design and Development comes from his career with Switching R&amp;D of ITI Ltd, Centre for Electronic Design and Technology of India (CEDTI) Calicut, L&amp;T Technology Services and his 5-year tenure as CTO of VVDN Technologies and a 5-year stint in GDA Technologies Inc, California, USA.</p>
-      <p>He made a mark as an academic and renowned teacher, when he headed the Division of Electronics and Communication Engineering for an year, at Cochin University of Science and Technology.</p>
-      <p>He founded Digital Core Technologies in 2014 with the wealth of knowledge and experience in Design &amp; Development, Coaching &amp; Mentoring, Teaching and Consulting.</p>
+    </div>
+    <div class="ceo-bg-band">
+      <img
+        class="leader-photo"
+        src="https://dicortech.com/assets/images/Team+DesignValley/Thomas.png?v=47ca272a84"
+        alt="S Thomas – CEO & MD"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      />
+      <div class="leader-photo-placeholder" style="display:none;">ST</div>
+      <div class="leader-info">
+        <p>An alumnus of Mysore University (1985) with MTech from IISc, Bangalore (1987) in Electronics Design and Technology, he attended the Executive Development Program in Product, Project and Quality Management from University of Warwick, UK (1995).</p>
+        <p>His expertise in the field of Electronic Product Design and Development comes from his career with Switching R&amp;D of ITI Ltd, Centre for Electronic Design and Technology of India (CEDTI) Calicut, L&amp;T Technology Services and his 5-year tenure as CTO of VVDN Technologies and a 5-year stint in GDA Technologies Inc, California, USA.</p>
+        <p>He made a mark as an academic and renowned teacher, when he headed the Division of Electronics and Communication Engineering for an year, at Cochin University of Science and Technology.</p>
+        <p>He founded Digital Core Technologies in 2014 with the wealth of knowledge and experience in Design &amp; Development, Coaching &amp; Mentoring, Teaching and Consulting.</p>
+      </div>
     </div>
   </div>
 
   <div class="leader-block reversed">
     <div class="leader-title-bg">Chairman</div>
     <div class="leader-info">
-      <div class="leader-name-row">
-        <div class="leader-role">Chairman</div>
+      <div class="leader-name-row"><br><br>
         <div class="leader-name">S M Balasubramaniyan</div>
         <div class="accent-bar-sm"></div>
       </div>
