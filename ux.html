@@ -1,1 +1,1056 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Digital Core Technologies – UX Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #2ec4c4;
+    --teal-deep: #00a8a8;
+    --teal2: #1aa8a8;
+    --dark: #1a1a1a;
+    --ink: #111;
+    --text: #333;
+    --text-light: #555;
+    --panel: #F5F5F8;
+    --border-light: #e0e0e0;
+    --accent-grad: linear-gradient(90deg, #0088cc, #00d4aa);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--text);
+    background: #fff;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; }
+
+  /* ─── NAV (matches software.html) ─── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    height: 64px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 52px;
+  }
+  .nav-left-section { display: flex; align-items: center; gap: 52px; }
+  .logo-link { display: flex; align-items: center; gap: 11px; text-decoration: none; color: #333; flex-shrink: 0; }
+  .logo-link svg { width: 38px; height: 38px; }
+  .logo-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+  .logo-wordmark .l1 {
+    font-family: 'Barlow', 'Arial Narrow', Arial, sans-serif;
+    font-weight: 700; font-size: 28px;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    color: #333;
+  }
+  .nav-group { display: flex; align-items: center; gap: 38px; }
+  .nav-group a {
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.025em;
+    color: #333; text-decoration: none; transition: color .2s;
+    position: relative;
+  }
+  .nav-group a:hover { color: var(--teal-deep); }
+  .nav-group a.active { color: var(--teal-deep); font-weight: 600; }
+  .nav-group a.active::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -20px; height: 2px;
+    background: var(--accent-grad);
+  }
+
+  .nav-toggle {
+    display: none; background: none; border: none; cursor: pointer; padding: 8px;
+    width: 40px; height: 40px; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--dark); position: relative; transition: background .2s; }
+  .nav-toggle span::before, .nav-toggle span::after {
+    content: ''; position: absolute; left: 0; width: 22px; height: 2px; background: var(--dark);
+    transition: transform .25s ease, top .25s ease, opacity .2s ease;
+  }
+  .nav-toggle span::before { top: -7px; }
+  .nav-toggle span::after { top: 7px; }
+  nav.nav-open .nav-toggle span { background: transparent; }
+  nav.nav-open .nav-toggle span::before { top: 0; transform: rotate(45deg); }
+  nav.nav-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    padding: 120px 60px 90px;
+    overflow: hidden;
+    min-height: 460px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(180deg, #fbfbfd 0%, #fff 100%);
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Barlow', sans-serif;
+    font-size: 150px;
+    font-weight: 800;
+    color: rgba(46,196,196,0.06);
+    white-space: nowrap;
+    letter-spacing: 10px;
+    z-index: 0;
+    user-select: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero-content { text-align: left; }
+
+  .hero-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--teal-deep);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: heroFade 0.8s ease-out 0.1s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: clamp(42px, 5.2vw, 76px);
+    font-weight: 800;
+    color: #000;
+    line-height: 1.02;
+    display: block;
+    opacity: 0;
+    transform: translateX(-60px);
+    animation: slideInFromLeft 1s ease-out 0.25s forwards;
+  }
+
+  .hero-title .accent-word {
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-light);
+    max-width: 460px;
+    margin-top: 26px;
+    opacity: 0;
+    animation: heroFade 0.8s ease-out 0.55s forwards;
+  }
+
+  .hero-line {
+    width: 90px;
+    height: 4px;
+    background: var(--accent-grad);
+    margin: 30px 0 0;
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: lineGrow 0.8s ease-out 0.8s forwards;
+  }
+
+  @keyframes slideInFromLeft {
+    0% { opacity: 0; transform: translateX(-70px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes heroFade {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineGrow {
+    from { opacity: 0; transform: scaleX(0); }
+    to { opacity: 1; transform: scaleX(1); }
+  }
+
+  /* Signature hero visual: layered wireframe -> screen cards with a traveling cursor */
+  .hero-visual {
+    position: relative;
+    height: 380px;
+    opacity: 0;
+    animation: heroFade 1s ease-out 0.5s forwards;
+  }
+
+  .hv-card {
+    position: absolute;
+    width: 230px;
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    box-shadow: 0 18px 40px rgba(20,30,40,0.10);
+    padding: 16px;
+  }
+
+  .hv-card.wire {
+    top: 10px; left: 0;
+    transform: rotate(-6deg);
+    z-index: 1;
+    border: 1.5px dashed #b9b9b9;
+    box-shadow: 0 10px 24px rgba(20,30,40,0.06);
+  }
+  .hv-card.wire .hv-line { background: #d8d8d8; }
+  .hv-card.wire .hv-block { background: #eee; border: 1px dashed #ccc; }
+
+  .hv-card.final {
+    top: 70px; left: 130px;
+    transform: rotate(4deg);
+    z-index: 2;
+    animation: floatY 5s ease-in-out infinite;
+  }
+
+  .hv-line { height: 8px; border-radius: 4px; background: #eef0f2; margin-bottom: 8px; }
+  .hv-line.short { width: 55%; }
+  .hv-card.final .hv-line.title { background: var(--teal); height: 10px; width: 65%; }
+  .hv-block { height: 46px; border-radius: 6px; background: #f0f6f6; margin-top: 12px; }
+  .hv-card.final .hv-block { background: linear-gradient(135deg, #e6fbf6, #d9f2ee); border: 1px solid #bfe9e2; }
+  .hv-dot-row { display: flex; gap: 6px; margin-top: 12px; }
+  .hv-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); opacity: 0.85; }
+  .hv-dot:nth-child(2) { opacity: 0.5; }
+  .hv-dot:nth-child(3) { opacity: 0.25; }
+
+  @keyframes floatY {
+    0%, 100% { transform: rotate(4deg) translateY(0); }
+    50% { transform: rotate(4deg) translateY(-10px); }
+  }
+
+  .hv-cursor {
+    position: absolute;
+    width: 22px; height: 22px;
+    z-index: 3;
+    animation: cursorTravel 6s ease-in-out infinite;
+  }
+  .hv-cursor svg { width: 100%; height: 100%; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)); }
+
+  @keyframes cursorTravel {
+    0%   { top: 210px; left: 40px; opacity: 0; }
+    8%   { opacity: 1; }
+    30%  { top: 150px; left: 190px; }
+    45%  { top: 150px; left: 190px; }
+    50%  { top: 145px; left: 185px; }
+    55%  { top: 150px; left: 190px; }
+    75%  { top: 260px; left: 90px; }
+    92%  { opacity: 1; }
+    100% { top: 210px; left: 40px; opacity: 0; }
+  }
+
+  .hv-ripple {
+    position: absolute;
+    top: 150px; left: 200px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--teal);
+    z-index: 2;
+    opacity: 0;
+    animation: ripple 6s ease-in-out infinite;
+  }
+  @keyframes ripple {
+    0%, 44% { opacity: 0; transform: scale(0.4); }
+    48% { opacity: 0.9; transform: scale(0.6); }
+    60% { opacity: 0; transform: scale(2.4); }
+    100% { opacity: 0; transform: scale(0.4); }
+  }
+
+  /* ─── PROCESS (numbered, like about.html focus-item) ─── */
+  .process-section {
+    padding: 90px 60px 100px;
+    background: #fff;
+  }
+
+  .section-head {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .section-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--teal-deep);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3.6vw, 40px);
+    color: #111;
+    letter-spacing: 0.5px;
+  }
+
+  .section-title-line {
+    width: 70px; height: 4px; background: var(--accent-grad);
+    margin: 16px auto 0;
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .process-item {
+    position: relative;
+    padding: 28px 22px 24px;
+    border-top: 3px solid var(--teal);
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .process-item.reveal { animation: riseIn 0.6s ease-out forwards; }
+
+  .process-num {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 800;
+    font-size: 56px;
+    color: #ececec;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .process-item h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.6px;
+    color: #191919;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .process-item p {
+    font-size: 13.5px;
+    color: var(--text-light);
+    line-height: 1.75;
+  }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── TOOLKIT DIAGRAM (radial, echoing software.html tech-section) ─── */
+  .toolkit-section {
+    padding: 90px 60px 110px;
+    background: var(--panel);
+    text-align: center;
+  }
+
+  .toolkit-diagram {
+    position: relative;
+    max-width: 1150px;
+    margin: 0 auto;
+    height: 460px;
+  }
+
+  .tk-node {
+    position: absolute;
+    width: 148px; height: 148px;
+    border-radius: 50%;
+    border: 2px solid var(--teal-deep);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: #222; letter-spacing: 0.3px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  .tk-node.reveal { animation: nodePop 0.55s cubic-bezier(.34,1.56,.64,1) forwards; }
+
+  .tk-node.center {
+    width: 108px; height: 108px;
+    left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    background: var(--accent-grad);
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    box-shadow: 0 10px 26px rgba(0,168,168,0.3);
+  }
+  .tk-node.center.reveal { animation: centerPop 0.6s ease-out forwards; }
+
+  @keyframes nodePop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes centerPop {
+    from { opacity: 0; transform: translate(-50%,-50%) scale(0.5); }
+    to { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  }
+
+  .tk-node:hover:not(.center) {
+    border-color: var(--teal);
+    transform: scale(1.06);
+    transition: transform .25s ease;
+  }
+
+  .tkn-1 { left: 3%; top: 6%; }
+  .tkn-2 { left: 24%; top: 0%; }
+  .tkn-3 { left: 46%; top: 20%; }
+  .tkn-4 { left: 56%; top: -2%; }
+  .tkn-5 { left: 75%; top: 4%; }
+  .tkn-6 { left: 88%; top: 28%; }
+  .tkn-7 { left: 72%; top: 58%; }
+  .tkn-8 { left: 44%; top: 68%; }
+  .tkn-9 { left: 16%; top: 56%; }
+
+  .tk-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .tk-lines line { stroke: #c7d9d9; stroke-width: 1.5; }
+
+  /* ─── KEY AREAS (2x2 grid, matches software.html key-areas) ─── */
+  .key-areas {
+    padding: 90px 60px 100px;
+    background: #fff;
+  }
+
+  .areas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .area-block {
+    padding: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .area-block.reveal { animation: riseIn 0.6s ease-out forwards; }
+
+  .area-header {
+    display: flex; align-items: center;
+    margin-bottom: 22px; border-bottom: 2px solid #eee; padding-bottom: 15px;
+  }
+
+  .area-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px; font-weight: 700; color: #222; flex: 1; letter-spacing: 0.3px;
+  }
+
+  .area-accent { width: 110px; height: 18px; background: var(--accent-grad); border-radius: 2px; flex-shrink: 0; }
+
+  .area-list { list-style: none; }
+  .area-list li {
+    font-size: 14px; color: #444; line-height: 1.85; margin-bottom: 6px;
+    padding-left: 15px; position: relative;
+  }
+  .area-list li::before { content: '•'; position: absolute; left: 0; color: var(--teal-deep); font-weight: bold; }
+
+  /* ─── SIGNATURE: SKETCH TO SCREEN FLIP CARDS ─── */
+  .sketch-section {
+    padding: 90px 60px 110px;
+    background: var(--panel);
+  }
+
+  .sketch-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+    max-width: 1300px;
+    margin: 50px auto 0;
+  }
+
+  .flip-card {
+    perspective: 1200px;
+    height: 210px;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .flip-card.reveal { animation: riseIn 0.6s ease-out forwards; }
+
+  .flip-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transition: transform 0.7s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+  }
+  .flip-card:hover .flip-inner,
+  .flip-card:focus-within .flip-inner { transform: rotateY(180deg); }
+
+  .flip-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    padding: 18px;
+    display: flex; flex-direction: column;
+  }
+
+  .flip-front {
+    background: #fff;
+    border: 1.5px dashed #c9c9c9;
+  }
+  .flip-front .fw-line { height: 7px; background: #e4e4e4; border-radius: 4px; margin-bottom: 8px; }
+  .flip-front .fw-line.w60 { width: 60%; }
+  .flip-front .fw-line.w40 { width: 40%; }
+  .flip-front .fw-box { flex: 1; margin-top: 8px; border: 1px dashed #d5d5d5; border-radius: 6px; background: #f6f6f6; }
+  .flip-front .fw-tag {
+    margin-top: auto; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; color: #999; text-transform: uppercase; padding-top: 10px;
+  }
+
+  .flip-back {
+    background: linear-gradient(150deg, #103b3b, #0c2b2b);
+    color: #fff;
+    transform: rotateY(180deg);
+    justify-content: center;
+  }
+  .flip-back .fb-step {
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--teal);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .flip-back h4 {
+    font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 10px;
+  }
+  .flip-back p { font-size: 12.5px; color: #cfe9e9; line-height: 1.7; }
+
+  .sketch-hint {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-light);
+    margin-top: 34px;
+    font-style: italic;
+  }
+
+  /* ─── FOOTER (matches about.html) ─── */
+  footer {
+    background: #111;
+    color: #aaa;
+    padding: 28px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    position: relative;
+  }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  .footer-copy {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; color: #fff;
+    position: absolute; right: 60px;
+  }
+  .footer-links a {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px; color: #fff; text-decoration: none; font-weight: 500;
+    transition: color .2s; position: relative;
+  }
+  .footer-links a::after {
+    content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px;
+    background: #fff; transition: width .2s;
+  }
+  .footer-links a:hover::after { width: 100%; }
+
+  /* ══════════════════ RESPONSIVE ══════════════════ */
+  @media (max-width: 1200px) {
+    nav { padding: 0 32px; }
+    .nav-left-section { gap: 34px; }
+    .nav-group { gap: 26px; }
+    .hero { padding: 100px 40px 70px; }
+    .process-section, .toolkit-section, .key-areas, .sketch-section { padding-left: 40px; padding-right: 40px; }
+    .areas-grid { gap: 40px; }
+    .process-grid { gap: 22px; }
+  }
+
+  @media (max-width: 980px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-visual { height: 300px; order: -1; }
+    .hero-content { text-align: center; }
+    .hero-line { margin-left: auto; margin-right: auto; }
+    .hero-subtitle { margin-left: auto; margin-right: auto; }
+    .process-grid { grid-template-columns: repeat(2, 1fr); }
+    .sketch-grid { grid-template-columns: repeat(2, 1fr); }
+    .toolkit-diagram { height: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+    .tk-node { position: relative; left: auto !important; top: auto !important; transform: none !important; }
+    .tk-node.center { order: -1; width: 100%; max-width: 220px; border-radius: 16px; height: 70px; }
+    .tk-lines { display: none; }
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-left-section { gap: 20px; }
+    .nav-toggle { display: flex; }
+    .nav-left-section .nav-group { display: none; }
+    nav > div:not(.nav-left-section) { display: none; }
+
+    nav.nav-open {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "logo toggle" "groupA groupA" "groupB groupB";
+      row-gap: 18px; height: auto; padding: 14px 20px 22px; align-items: center;
+    }
+    nav.nav-open .nav-left-section { display: contents; }
+    nav.nav-open .nav-left-section .logo-link { grid-area: logo; }
+    nav.nav-open .nav-left-section .nav-group {
+      grid-area: groupA; display: flex; flex-direction: column; align-items: flex-start;
+      gap: 16px; padding-top: 18px; border-top: 1px solid var(--border-light);
+    }
+    nav.nav-open .nav-toggle { grid-area: toggle; }
+    nav.nav-open > div:not(.nav-left-section) { display: contents; }
+    nav.nav-open > div:not(.nav-left-section) .nav-group {
+      grid-area: groupB; display: flex; flex-direction: column; align-items: flex-start;
+      gap: 16px; padding-top: 18px; border-top: 1px solid var(--border-light);
+    }
+    .nav-group a.active::after { display: none; }
+    .nav-group a { font-size: 14px; }
+    .logo-wordmark .l1 { font-size: 22px; }
+    .logo-link svg { width: 30px; height: 30px; }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .logo-wordmark .l1 { font-size: 19px; letter-spacing: 0.06em; }
+    .logo-link svg { width: 26px; height: 26px; }
+    .logo-link { gap: 8px; }
+
+    .hero { padding: 30px 16px 50px; min-height: auto; }
+    .hero-bg-text { font-size: 90px; }
+    .hero-title { font-size: 34px; }
+    .hero-subtitle { font-size: 14px; }
+    .hero-visual { height: 240px; }
+    .hv-card { width: 180px; padding: 12px; }
+    .hv-card.final { left: 90px; top: 60px; }
+
+    .process-section, .toolkit-section, .key-areas, .sketch-section { padding: 50px 16px 60px; }
+    .process-grid { grid-template-columns: 1fr; gap: 26px; }
+    .areas-grid { grid-template-columns: 1fr; gap: 34px; }
+    .sketch-grid { grid-template-columns: 1fr; }
+    .flip-card { height: 190px; }
+    .toolkit-diagram { height: auto; }
+
+    footer { padding: 20px 16px 30px; flex-direction: column; gap: 14px; }
+    .footer-copy { position: static; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .hero-title, .hero-subtitle, .hero-eyebrow, .hero-line, .hero-visual,
+    .process-item, .area-block, .tk-node, .flip-card {
+      opacity: 1 !important; transform: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav id="site-nav">
+  <div class="nav-left-section">
+    <a href="index.html" class="logo-link" aria-label="NEXSUS Home">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="20,20 6,12 6,28 20,36" fill="#2d6be4" opacity="0.9"/>
+        <polygon points="20,20 34,12 34,28 20,36" fill="#22c5b8" opacity="0.9"/>
+        <polygon points="20,4 34,12 20,20 6,12" fill="#a855f7" opacity="0.8"/>
+        <line x1="20" y1="4" x2="20" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+        <line x1="6" y1="12" x2="34" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+        <line x1="34" y1="12" x2="6" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+      </svg>
+      <div class="logo-wordmark"><span class="l1">NEXSUS</span></div>
+    </a>
+    <div class="nav-group" style="gap:48px;">
+      <a href="software.html">Software</a>
+      <a href="data_governance.html">Data Governance</a>
+      <a href="ux.html" class="active">UX</a>
+      <a href="ai.html">AI</a>
+    </div>
+  </div>
+
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="site-nav">
+    <span></span>
+  </button>
+
+  <div>
+    <div class="nav-group" style="gap:48px;">
+      <a href="#">Core Modules</a>
+      <a href="about.html">About Us</a>
+      <a href="#">CSR</a>
+      <a href="#">News</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-bg-text">USER FIRST</div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Design Services</div>
+      <h1 class="hero-title">Interfaces people<br><span class="accent-word">actually enjoy</span> using</h1>
+      <p class="hero-subtitle">We take embedded products, dashboards and applications from rough idea to tested, shippable interface — grounded in how real users think, tap and troubleshoot.</p>
+      <div class="hero-line"></div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hv-card wire">
+        <div class="hv-line" style="width:40%;"></div>
+        <div class="hv-line short"></div>
+        <div class="hv-block"></div>
+        <div class="hv-dot-row">
+          <div class="hv-dot" style="background:#ccc;"></div>
+          <div class="hv-dot" style="background:#ccc;"></div>
+          <div class="hv-dot" style="background:#ccc;"></div>
+        </div>
+      </div>
+      <div class="hv-card final">
+        <div class="hv-line title"></div>
+        <div class="hv-line short"></div>
+        <div class="hv-block"></div>
+        <div class="hv-dot-row">
+          <div class="hv-dot"></div>
+          <div class="hv-dot"></div>
+          <div class="hv-dot"></div>
+        </div>
+      </div>
+      <div class="hv-ripple"></div>
+      <div class="hv-cursor">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 2L4 20L9 15.5L12 22L15 20.5L12 14L19 14L4 2Z" fill="#111"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ PROCESS ═══════════ -->
+<section class="process-section">
+  <div class="section-head">
+    <div class="section-eyebrow">How We Work</div>
+    <div class="section-title">From Research to Release</div>
+    <div class="section-title-line"></div>
+  </div>
+
+  <div class="process-grid">
+    <div class="process-item">
+      <div class="process-num">01</div>
+      <h3>Discover</h3>
+      <p>User interviews, stakeholder workshops and competitive review to define the real problem before any pixel is placed.</p>
+    </div>
+    <div class="process-item">
+      <div class="process-num">02</div>
+      <h3>Design</h3>
+      <p>Low-fi wireframes and information architecture, refined into high-fidelity screens with a consistent design system.</p>
+    </div>
+    <div class="process-item">
+      <div class="process-num">03</div>
+      <h3>Prototype</h3>
+      <p>Clickable, interactive prototypes that behave like the real product, so decisions get made on something people can use.</p>
+    </div>
+    <div class="process-item">
+      <div class="process-num">04</div>
+      <h3>Validate</h3>
+      <p>Usability testing and accessibility review with real users, feeding fixes back into the design before handoff to engineering.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TOOLKIT DIAGRAM ═══════════ -->
+<section class="toolkit-section">
+  <div class="section-head">
+    <div class="section-eyebrow">Capabilities</div>
+    <div class="section-title">UX Toolkit &amp; Expertise</div>
+    <div class="section-title-line"></div>
+  </div>
+
+  <div class="toolkit-diagram">
+    <svg class="tk-lines" viewBox="0 0 1150 460">
+      <line x1="80" y1="90" x2="230" y2="55" />
+      <line x1="230" y1="55" x2="450" y2="150" />
+      <line x1="80" y1="90" x2="150" y2="290" />
+      <line x1="150" y1="290" x2="330" y2="330" />
+      <line x1="330" y1="330" x2="450" y2="150" />
+      <line x1="450" y1="150" x2="580" y2="55" />
+      <line x1="580" y1="55" x2="720" y2="35" />
+      <line x1="720" y1="35" x2="880" y2="90" />
+      <line x1="880" y1="90" x2="850" y2="270" />
+      <line x1="850" y1="270" x2="960" y2="230" />
+      <line x1="450" y1="150" x2="620" y2="310" />
+      <line x1="620" y1="310" x2="850" y2="270" />
+    </svg>
+
+    <div class="tk-node center">UX &amp; DESIGN</div>
+    <div class="tk-node tkn-1">USER RESEARCH &amp; INTERVIEWS</div>
+    <div class="tk-node tkn-2">WIREFRAMING &amp; INFORMATION ARCHITECTURE</div>
+    <div class="tk-node tkn-3">FIGMA / ADOBE XD PROTOTYPING</div>
+    <div class="tk-node tkn-4">DESIGN SYSTEMS &amp; COMPONENT LIBRARIES</div>
+    <div class="tk-node tkn-5">EMBEDDED &amp; TOUCHSCREEN GUI DESIGN</div>
+    <div class="tk-node tkn-6">USABILITY TESTING</div>
+    <div class="tk-node tkn-7">ACCESSIBILITY / WCAG</div>
+    <div class="tk-node tkn-8">MOTION &amp; MICRO-INTERACTIONS</div>
+    <div class="tk-node tkn-9">RESPONSIVE WEB &amp; APP UI</div>
+  </div>
+</section>
+
+<!-- ═══════════ KEY AREAS ═══════════ -->
+<section class="key-areas">
+  <div class="section-head">
+    <div class="section-eyebrow">Key Areas</div>
+    <div class="section-title">What We Deliver</div>
+    <div class="section-title-line"></div>
+  </div>
+
+  <div class="areas-grid">
+    <div class="area-block">
+      <div class="area-header">
+        <div class="area-title">Research &amp; Strategy</div>
+        <div class="area-accent"></div>
+      </div>
+      <ul class="area-list">
+        <li>User interviews, surveys and contextual inquiry</li>
+        <li>Persona development and journey mapping</li>
+        <li>Competitive and heuristic analysis</li>
+        <li>Information architecture and content strategy</li>
+        <li>Task flows and user story mapping</li>
+      </ul>
+    </div>
+
+    <div class="area-block">
+      <div class="area-header">
+        <div class="area-title">Interaction &amp; Visual Design</div>
+        <div class="area-accent"></div>
+      </div>
+      <ul class="area-list">
+        <li>Low and high-fidelity wireframes</li>
+        <li>Interactive prototyping in Figma and Adobe XD</li>
+        <li>Design systems, style guides and component libraries</li>
+        <li>Embedded and touchscreen GUI design for RTOS/Linux devices</li>
+        <li>Responsive web and mobile app interfaces</li>
+      </ul>
+    </div>
+
+    <div class="area-block">
+      <div class="area-header">
+        <div class="area-title">Testing &amp; Validation</div>
+        <div class="area-accent"></div>
+      </div>
+      <ul class="area-list">
+        <li>Moderated and unmoderated usability testing</li>
+        <li>A/B testing and analytics-driven iteration</li>
+        <li>Accessibility audits against WCAG 2.1</li>
+        <li>Developer handoff with annotated specs</li>
+      </ul>
+    </div>
+
+    <div class="area-block">
+      <div class="area-header">
+        <div class="area-title">Industries We Support</div>
+        <div class="area-accent"></div>
+      </div>
+      <ul class="area-list">
+        <li>Industrial IoT dashboards and control panels</li>
+        <li>Automotive infotainment and cluster interfaces</li>
+        <li>Imaging, thermal and camera-based device UIs</li>
+        <li>Enterprise web and cloud applications</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SKETCH TO SCREEN (signature) ═══════════ -->
+<section class="sketch-section">
+  <div class="section-head">
+    <div class="section-eyebrow">Our Craft</div>
+    <div class="section-title">From Sketch to Screen</div>
+    <div class="section-title-line"></div>
+  </div>
+
+  <div class="sketch-grid">
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="fw-line w60"></div>
+          <div class="fw-line w40"></div>
+          <div class="fw-box"></div>
+          <div class="fw-tag">Wireframe</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="fb-step">Step 01</div>
+          <h4>Structure first</h4>
+          <p>Layout and hierarchy get proven in low-fidelity before any visual style is applied.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="fw-line w60"></div>
+          <div class="fw-line w40"></div>
+          <div class="fw-box"></div>
+          <div class="fw-tag">Flow</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="fb-step">Step 02</div>
+          <h4>Map the journey</h4>
+          <p>Screens connect into flows that mirror how a user actually moves through the task.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="fw-line w60"></div>
+          <div class="fw-line w40"></div>
+          <div class="fw-box"></div>
+          <div class="fw-tag">Prototype</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="fb-step">Step 03</div>
+          <h4>Make it clickable</h4>
+          <p>An interactive prototype replaces static images so feedback is based on real behaviour.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="fw-line w60"></div>
+          <div class="fw-line w40"></div>
+          <div class="fw-box"></div>
+          <div class="fw-tag">Polish</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="fb-step">Step 04</div>
+          <h4>Design system-ready</h4>
+          <p>Final screens ship with reusable components and specs so engineering builds it exactly right.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="sketch-hint">Hover a card to see how each screen matures from sketch to shipped design.</p>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="footer-links">
+    <a href="https://in.linkedin.com/company/digital-core-technologies-pvt-ltd">LinkedIn</a>
+    <a href="https://twitter.com/dicortech">X</a>
+    <a href="https://www.facebook.com/DICORTECH/">Facebook</a>
+    <a href="https://www.youtube.com/@digitalcoretechnologies">Youtube</a>
+  </div>
+  <div class="footer-copy">© Digital Core Technologies Pvt Ltd, 2024</div>
+</footer>
+
+<script>
+  function initNavToggle() {
+    const nav = document.getElementById('site-nav');
+    const toggle = document.getElementById('nav-toggle');
+    if (!nav || !toggle) return;
+
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    nav.querySelectorAll('.nav-group a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        nav.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  function initRevealOnScroll() {
+    const targets = document.querySelectorAll('.process-item, .area-block, .flip-card');
+    const nodes = document.querySelectorAll('.tk-node');
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const group = entry.target.parentElement.children;
+            const items = [...group].filter(el =>
+              el.classList.contains('process-item') ||
+              el.classList.contains('area-block') ||
+              el.classList.contains('flip-card')
+            );
+            items.forEach((el, i) => {
+              setTimeout(() => el.classList.add('reveal'), i * 110);
+            });
+            [...group].forEach(el => observer.unobserve(el));
+          }
+        });
+      }, { threshold: 0.2 });
+      targets.forEach(el => observer.observe(el));
+
+      const nodeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const allNodes = document.querySelectorAll('.tk-node');
+            allNodes.forEach((el, i) => {
+              setTimeout(() => el.classList.add('reveal'), i * 90);
+            });
+            nodeObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.15 });
+      const diagram = document.querySelector('.toolkit-diagram');
+      if (diagram) nodeObserver.observe(diagram);
+    } else {
+      targets.forEach(el => el.classList.add('reveal'));
+      nodes.forEach(el => el.classList.add('reveal'));
+    }
+  }
+
+  if (document.readyState === 'complete') {
+    initNavToggle();
+    initRevealOnScroll();
+  } else {
+    window.addEventListener('load', () => {
+      initNavToggle();
+      initRevealOnScroll();
+    });
+  }
+</script>
+
+</body>
+</html>

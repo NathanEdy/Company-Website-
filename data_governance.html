@@ -1,1 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Core Technologies - Data Governance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: #333;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════ NAV (matches software.html — unchanged) ═══════════════════════ */
+        nav {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 200;
+            height: 64px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 52px;
+        }
+        .logo-link { display: flex; align-items: center; gap: 11px; text-decoration: none; color: #fff; flex-shrink: 0; }
+        .nav-left-section { display: flex; align-items: center; gap: 52px; }
+        .logo-link svg { width: 38px; height: 38px; }
+        .logo-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+        .logo-wordmark .l1 {
+            font-family: 'Barlow', 'Arial Narrow', Arial, sans-serif;
+            font-weight: 700; font-size: 28px;
+            letter-spacing: 0.09em; text-transform: uppercase;
+        }
+        .nav-group { display: flex; align-items: center; gap: 38px; }
+        .nav-group a {
+            font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.025em;
+            color: #fff; text-decoration: none; transition: color .2s;
+        }
+        .nav-group a:hover { color: #e6b94a; }
+        nav, .nav-group a, .logo-link { color: #333; }
+        nav { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        .nav-toggle {
+            display: none;
+            background: none; border: none; cursor: pointer;
+            padding: 8px; width: 40px; height: 40px;
+            align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .nav-toggle span { display: block; width: 22px; height: 2px; background: #333; position: relative; transition: background .2s; }
+        .nav-toggle span::before, .nav-toggle span::after {
+            content: ''; position: absolute; left: 0; width: 22px; height: 2px; background: #333;
+            transition: transform .25s ease, top .25s ease, opacity .2s ease;
+        }
+        .nav-toggle span::before { top: -7px; }
+        .nav-toggle span::after { top: 7px; }
+        nav.nav-open .nav-toggle span { background: transparent; }
+        nav.nav-open .nav-toggle span::before { top: 0; transform: rotate(45deg); }
+        nav.nav-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
+
+        /* ═══════════════════════ HERO ═══════════════════════
+           New signature element: a "governance trust score" ring gauge
+           with a live-feeling legend, paired with a lean title block. */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 60px;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 152px 60px 90px;
+        }
+        .hero-eyebrow {
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px;
+            letter-spacing: 3px; color: #00a8a8; text-transform: uppercase; margin-bottom: 14px;
+        }
+        .hero-title {
+            font-family: 'Montserrat', sans-serif; font-weight: 800;
+            font-size: clamp(30px, 4.2vw, 52px); color: #111; line-height: 1.15; margin-bottom: 18px;
+        }
+        .hero-underline {
+            width: 90px; height: 4px; background: linear-gradient(90deg, #00a8a8, #2ec4c4);
+            margin-bottom: 24px; transform-origin: left; animation: growLine .8s ease .3s both;
+        }
+        @keyframes growLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        .hero-desc { font-size: 14.5px; color: #555; line-height: 1.9; max-width: 480px; margin-bottom: 34px; }
+        .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+        .hero-stat .num { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 28px; color: #111; }
+        .hero-stat .label { font-size: 10.5px; color: #888; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px; }
+
+        .gauge-card {
+            background: #fff; border: 1px solid #ececec; border-radius: 12px;
+            padding: 34px 30px; box-shadow: 0 14px 34px rgba(0,0,0,0.05);
+        }
+        .gauge-card h4 {
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px;
+            letter-spacing: 1.5px; text-transform: uppercase; color: #333; text-align: center; margin-bottom: 22px;
+        }
+        .gauge-wrap { position: relative; width: 190px; height: 190px; margin: 0 auto 26px; }
+        .gauge-wrap svg { width: 100%; height: 100%; }
+        .gauge-ring-fg { animation: ringDraw 1.3s cubic-bezier(.3,.8,.3,1) .4s both; }
+        @keyframes ringDraw { from { stroke-dashoffset: 502.65; } to { stroke-dashoffset: 30.16; } }
+        .gauge-score { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .gauge-score .pct { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 34px; color: #111; }
+        .gauge-score .lbl { font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: #999; margin-top: 4px; text-align: center; }
+
+        .gauge-legend { display: flex; flex-direction: column; gap: 13px; }
+        .legend-row { display: flex; align-items: center; gap: 10px; }
+        .legend-label {
+            flex: 0 0 76px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 10.5px;
+            color: #444; text-transform: uppercase; letter-spacing: 0.4px;
+        }
+        .legend-bar-track { flex: 1; height: 6px; background: #eee; border-radius: 4px; overflow: hidden; }
+        .legend-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #00a8a8, #2ec4c4); border-radius: 4px;
+            transform-origin: left; animation: fillGrow .9s ease .5s both;
+        }
+        @keyframes fillGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        .legend-pct { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11px; color: #555; width: 30px; text-align: right; }
+
+        /* ═══════════════════════ CAPABILITIES (icon row) ═══════════════════════ */
+        .capabilities { padding: 20px 60px 80px; background: #fff; }
+        .cap-header { text-align: center; margin-bottom: 55px; }
+        .cap-header h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 30px; color: #333; margin-bottom: 10px; }
+        .cap-line { width: 110px; height: 4px; background: linear-gradient(90deg, #0088cc, #00d4aa); margin: 0 auto; }
+        .cap-grid { display: flex; justify-content: space-between; gap: 20px; max-width: 1300px; margin: 0 auto; position: relative; }
+        .cap-grid::before { content: ''; position: absolute; left: 6%; right: 6%; top: 34px; height: 0; border-top: 2px dashed #ddd; z-index: 0; }
+        .cap-item { flex: 1; text-align: center; position: relative; z-index: 1; }
+        .cap-icon {
+            width: 68px; height: 68px; border-radius: 50%; background: #fff; border: 2px solid #00a8a8;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #00a8a8;
+        }
+        .cap-icon svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+        .cap-item h3 {
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12.5px; letter-spacing: 0.5px;
+            text-transform: uppercase; color: #222; margin-bottom: 8px;
+        }
+        .cap-item p { font-size: 12px; color: #666; line-height: 1.65; max-width: 175px; margin: 0 auto; }
+
+        /* ═══════════════════════ LIFECYCLE TIMELINE ═══════════════════════ */
+        .timeline-section { padding: 80px 60px; background: #F9F9FB; }
+        .timeline-section .cap-header h2 { color: #333; }
+        .timeline { position: relative; max-width: 880px; margin: 60px auto 0; }
+        .timeline::before {
+            content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+            background: #dcdcdc; transform: translateX(-50%);
+        }
+        .tl-item { position: relative; width: 50%; padding: 0 44px 56px; }
+        .tl-item:last-child { padding-bottom: 0; }
+        .tl-item:nth-child(odd) { left: 0; text-align: right; }
+        .tl-item:nth-child(even) { left: 50%; text-align: left; }
+        .tl-dot {
+            position: absolute; top: 4px; width: 14px; height: 14px; border-radius: 50%;
+            background: #00a8a8; border: 3px solid #F9F9FB; box-shadow: 0 0 0 2px #00a8a8;
+        }
+        .tl-item:nth-child(odd) .tl-dot { right: -8px; }
+        .tl-item:nth-child(even) .tl-dot { left: -8px; }
+        .tl-index {
+            font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 11px;
+            color: #00a8a8; letter-spacing: 1px; margin-bottom: 6px;
+        }
+        .tl-item h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; color: #111; margin-bottom: 8px; }
+        .tl-item p { font-size: 13px; color: #666; line-height: 1.75; }
+
+        /* ═══════════════════════ KEY PRACTICE AREAS (accordion) ═══════════════════════ */
+        .practice-section { padding: 80px 60px; background: #fff; }
+        .accordion { max-width: 880px; margin: 50px auto 0; }
+        .acc-item { border-bottom: 1px solid #eaeaea; padding: 22px 0; }
+        .acc-item:first-child { border-top: 1px solid #eaeaea; }
+        .acc-item summary {
+            list-style: none; cursor: pointer; display: flex; align-items: center; gap: 22px;
+        }
+        .acc-item summary::-webkit-details-marker { display: none; }
+        .acc-num { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 22px; color: #d8d8d8; width: 38px; flex-shrink: 0; }
+        .acc-item[open] .acc-num { color: #00a8a8; }
+        .acc-title {
+            flex: 1; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px;
+            letter-spacing: 0.3px; color: #111; text-transform: uppercase;
+        }
+        .acc-toggle { width: 20px; height: 20px; position: relative; flex-shrink: 0; }
+        .acc-toggle::before, .acc-toggle::after { content: ''; position: absolute; background: #00a8a8; }
+        .acc-toggle::before { width: 14px; height: 2px; top: 9px; left: 3px; }
+        .acc-toggle::after { width: 2px; height: 14px; left: 9px; top: 3px; transition: transform .2s ease; }
+        .acc-item[open] .acc-toggle::after { transform: scaleY(0); }
+        .acc-body { padding: 16px 0 4px 60px; }
+        .acc-body p { font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 14px; }
+        .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-chip {
+            font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+            color: #00838a; border: 1px solid #00a8a8; border-radius: 20px; padding: 4px 10px;
+        }
+
+        /* ═══════════════════════ ROLES (flat cards) ═══════════════════════ */
+        .roles-section { padding: 80px 60px; background: #F9F9FB; }
+        .roles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 50px auto 0; }
+        .role-card {
+            background: #fff; border: 1px solid #ececec; border-radius: 10px; padding: 32px 28px;
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+        .role-card:hover { box-shadow: 0 14px 30px rgba(0,0,0,0.06); transform: translateY(-4px); }
+        .role-avatar-flat {
+            width: 54px; height: 54px; border-radius: 50%; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 18px;
+        }
+        .role-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; color: #111; margin-bottom: 4px; }
+        .role-eyebrow-flat {
+            font-size: 10.5px; color: #00a8a8; text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 700; margin-bottom: 14px;
+        }
+        .role-card p { font-size: 12.5px; color: #666; line-height: 1.75; margin-bottom: 14px; }
+        .role-card ul { list-style: none; }
+        .role-card ul li { font-size: 12px; color: #555; padding-left: 16px; position: relative; margin-bottom: 6px; }
+        .role-card ul li::before { content: '—'; position: absolute; left: 0; color: #00a8a8; }
+
+        /* ═══════════════════════ STANDARDS (dark band) ═══════════════════════ */
+        .standards-band {
+            position: relative; padding: 80px 60px; text-align: center; overflow: hidden;
+            background: linear-gradient(135deg, #0b3d3d 0%, #0a2a4a 100%);
+        }
+        .standards-band::before, .standards-band::after {
+            content: ''; position: absolute; border-radius: 50%; opacity: 0.12; pointer-events: none;
+        }
+        .standards-band::before { width: 420px; height: 420px; background: #2ec4c4; top: -180px; left: -120px; }
+        .standards-band::after { width: 340px; height: 340px; background: #0088cc; bottom: -160px; right: -100px; }
+        .standards-band h2 {
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 28px; color: #fff;
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 1;
+        }
+        .standards-band .sub { font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 40px; position: relative; z-index: 1; }
+        .chip-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; position: relative; z-index: 1; }
+        .std-chip {
+            display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 30px; padding: 11px 22px; background: rgba(255,255,255,0.06);
+        }
+        .std-chip svg { width: 17px; height: 17px; stroke: #2ec4c4; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+        .std-chip span { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px; color: #fff; letter-spacing: 0.5px; }
+
+        /* ═══════════════════════ FOOTER (matches about.html — unchanged) ═══════════════════════ */
+        footer {
+            background: #111; color: #aaa; padding: 28px 60px;
+            display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px;
+            position: relative;
+        }
+        .footer-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+        .footer-copy { font-family: 'Montserrat', sans-serif; font-size: 11px; color: #fff; position: absolute; right: 60px; }
+        .footer-links a {
+            font-family: 'Montserrat', sans-serif; font-size: 12px; color: #fff; text-decoration: none;
+            font-weight: 500; transition: color .2s; position: relative;
+        }
+        .footer-links a::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px; background: #fff; transition: width .2s; }
+        .footer-links a:hover::after { width: 100%; }
+
+        /* ═══════════════════════ RESPONSIVE ═══════════════════════ */
+        @media (max-width: 1200px) {
+            nav { padding: 0 32px; }
+            .nav-left-section { gap: 34px; }
+            .nav-group { gap: 26px; }
+            .hero-grid { padding: 130px 40px 70px; gap: 40px; }
+            .capabilities { padding: 10px 40px 70px; }
+            .timeline-section { padding: 70px 40px; }
+            .practice-section { padding: 70px 40px; }
+            .roles-section { padding: 70px 40px; }
+            .roles-grid { gap: 24px; }
+            .standards-band { padding: 70px 40px; }
+        }
+
+        @media (max-width: 900px) {
+            nav { padding: 0 20px; }
+            .nav-left-section { gap: 20px; }
+            .nav-toggle { display: flex; }
+            .nav-left-section .nav-group { display: none; }
+            nav > div:not(.nav-left-section) { display: none; }
+            nav.nav-open {
+                display: grid; grid-template-columns: 1fr auto;
+                grid-template-areas: "logo toggle" "groupA groupA" "groupB groupB";
+                row-gap: 18px; height: auto; padding: 14px 20px 22px; align-items: center;
+            }
+            nav.nav-open .nav-left-section { display: contents; }
+            nav.nav-open .nav-left-section .logo-link { grid-area: logo; }
+            nav.nav-open .nav-left-section .nav-group {
+                grid-area: groupA; display: flex; flex-direction: column; align-items: flex-start;
+                gap: 16px; padding-top: 18px; border-top: 1px solid #e0e0e0;
+            }
+            nav.nav-open .nav-toggle { grid-area: toggle; }
+            nav.nav-open > div:not(.nav-left-section) { display: contents; }
+            nav.nav-open > div:not(.nav-left-section) .nav-group {
+                grid-area: groupB; display: flex; flex-direction: column; align-items: flex-start;
+                gap: 16px; padding-top: 18px; border-top: 1px solid #e0e0e0;
+            }
+            .nav-group a { font-size: 14px; }
+            .logo-wordmark .l1 { font-size: 22px; }
+            .logo-link svg { width: 30px; height: 30px; }
+
+            .hero-grid { grid-template-columns: 1fr; padding: 110px 24px 50px; }
+            .hero-desc { max-width: none; }
+            .gauge-card { max-width: 340px; margin: 0 auto; }
+
+            .capabilities { padding: 10px 24px 60px; }
+            .cap-grid { flex-wrap: wrap; row-gap: 40px; }
+            .cap-item { flex: 1 1 calc(33.33% - 20px); min-width: 140px; }
+            .cap-grid::before { display: none; }
+
+            .timeline-section { padding: 50px 24px; }
+            .timeline { margin-top: 40px; }
+            .timeline::before { left: 8px; }
+            .tl-item { width: 100%; text-align: left !important; padding: 0 0 40px 34px; left: 0 !important; }
+            .tl-item .tl-dot { left: 1px !important; right: auto !important; }
+
+            .practice-section { padding: 50px 24px; }
+            .accordion { margin-top: 36px; }
+            .acc-body { padding-left: 40px; }
+
+            .roles-section { padding: 50px 24px; }
+            .roles-grid { grid-template-columns: 1fr 1fr; }
+
+            .standards-band { padding: 55px 24px; }
+        }
+
+        @media (max-width: 640px) {
+            nav { padding: 0 16px; }
+            .logo-wordmark .l1 { font-size: 19px; letter-spacing: 0.06em; }
+            .logo-link svg { width: 26px; height: 26px; }
+            .logo-link { gap: 8px; }
+
+            .hero-grid { padding: 96px 16px 40px; }
+            .hero-stats { gap: 26px; }
+            .gauge-card { padding: 28px 20px; }
+
+            .capabilities { padding: 10px 16px 50px; }
+            .cap-item { flex: 1 1 calc(50% - 16px); }
+            .cap-header h2 { font-size: 24px; }
+
+            .timeline-section { padding: 40px 16px; }
+            .tl-item { padding-left: 28px; }
+
+            .practice-section { padding: 40px 16px; }
+            .acc-title { font-size: 13px; }
+            .acc-body { padding-left: 30px; }
+
+            .roles-section { padding: 40px 16px; }
+            .roles-grid { grid-template-columns: 1fr; }
+
+            .standards-band { padding: 44px 16px; }
+            .standards-band h2 { font-size: 22px; }
+            .std-chip { padding: 9px 16px; }
+
+            footer { padding: 20px 16px 56px; flex-direction: column; align-items: center; gap: 14px; }
+            .footer-links { gap: 16px 20px; }
+            .footer-copy { position: static; text-align: center; }
+        }
+
+        @media (max-width: 380px) {
+            .hero-title { font-size: 26px; }
+            .hero-stats { gap: 20px; }
+            .cap-item { flex: 1 1 100%; }
+            .roles-grid { grid-template-columns: 1fr; }
+            .chip-row { gap: 10px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-underline, .gauge-ring-fg, .legend-bar-fill { animation: none !important; }
+            .gauge-ring-fg { stroke-dashoffset: 30.16; }
+            .legend-bar-fill { transform: scaleX(1); }
+            .hero-underline { transform: scaleX(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation (matches software.html, with a mobile dropdown) -->
+    <nav id="site-nav">
+      <div class="nav-left-section">
+        <a href="index.html" class="logo-link" aria-label="NEXSUS Home">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,20 6,12 6,28 20,36" fill="#2d6be4" opacity="0.9"></polygon><polygon points="20,20 34,12 34,28 20,36" fill="#22c5b8" opacity="0.9"></polygon><polygon points="20,4 34,12 20,20 6,12" fill="#a855f7" opacity="0.8"></polygon><line x1="20" y1="4" x2="20" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"></line><line x1="6" y1="12" x2="34" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"></line><line x1="34" y1="12" x2="6" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"></line></svg>
+          <div class="logo-wordmark">
+            <span class="l1">NEXSUS</span>
+          </div>
+        </a>
+        <div class="nav-group" style="gap:48px;">
+          <a href="software.html">Software</a>
+          <a href="data_governance.html" aria-current="page">Data Governance</a>
+          <a href="ux.html">UX</a>
+          <a href="ai.html">AI</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+      </button>
+
+      <div>
+        <div class="nav-group" style="gap:48px;">
+          <a href="#">Core Modules</a>
+          <a href="about.html">About Us</a>
+          <a href="#">CSR</a>
+          <a href="#">News</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <section class="hero-grid">
+        <div>
+            <div class="hero-eyebrow">Data Governance</div>
+            <h1 class="hero-title">Make every dataset accurate, secure and accountable</h1>
+            <div class="hero-underline"></div>
+            <p class="hero-desc">We build governance into the platform instead of bolting it on afterward — so quality, access and compliance hold up automatically as systems, sources and regulations keep multiplying.</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="num">4</div><div class="label">Lifecycle Stages</div></div>
+                <div class="hero-stat"><div class="num">5+</div><div class="label">Regulatory Frameworks</div></div>
+                <div class="hero-stat"><div class="num">24/7</div><div class="label">Policy Monitoring</div></div>
+            </div>
+        </div>
+
+        <div class="gauge-card">
+            <h4>Governance Maturity</h4>
+            <div class="gauge-wrap">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="80" stroke="#eee" stroke-width="14" fill="none" />
+                    <circle class="gauge-ring-fg" cx="100" cy="100" r="80" stroke="#00a8a8" stroke-width="14" fill="none"
+                        stroke-linecap="round" stroke-dasharray="502.65" stroke-dashoffset="502.65"
+                        transform="rotate(-90 100 100)" />
+                </svg>
+                <div class="gauge-score">
+                    <div class="pct">94%</div>
+                    <div class="lbl">Overall Score</div>
+                </div>
+            </div>
+            <div class="gauge-legend">
+                <div class="legend-row">
+                    <div class="legend-label">Quality</div>
+                    <div class="legend-bar-track"><div class="legend-bar-fill" style="width:96%"></div></div>
+                    <div class="legend-pct">96%</div>
+                </div>
+                <div class="legend-row">
+                    <div class="legend-label">Security</div>
+                    <div class="legend-bar-track"><div class="legend-bar-fill" style="width:91%"></div></div>
+                    <div class="legend-pct">91%</div>
+                </div>
+                <div class="legend-row">
+                    <div class="legend-label">Compliance</div>
+                    <div class="legend-bar-track"><div class="legend-bar-fill" style="width:98%"></div></div>
+                    <div class="legend-pct">98%</div>
+                </div>
+                <div class="legend-row">
+                    <div class="legend-label">Lineage</div>
+                    <div class="legend-bar-track"><div class="legend-bar-fill" style="width:89%"></div></div>
+                    <div class="legend-pct">89%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ CAPABILITIES ═══════════════════════ -->
+    <section class="capabilities">
+        <div class="cap-header">
+            <h2>Core Capabilities</h2>
+            <div class="cap-line"></div>
+        </div>
+        <div class="cap-grid">
+            <div class="cap-item">
+                <div class="cap-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><line x1="20" y1="20" x2="14.65" y2="14.65"/></svg>
+                </div>
+                <h3>Discover</h3>
+                <p>Inventory and catalog every data asset across every system</p>
+            </div>
+            <div class="cap-item">
+                <div class="cap-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 11 11 3h7a3 3 0 0 1 3 3v7l-8 8-10-10z"/><circle cx="15.5" cy="8.5" r="1.5"/></svg>
+                </div>
+                <h3>Classify</h3>
+                <p>Assign ownership, sensitivity and applicable policy</p>
+            </div>
+            <div class="cap-item">
+                <div class="cap-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/></svg>
+                </div>
+                <h3>Protect</h3>
+                <p>Apply access control, encryption and privacy safeguards</p>
+            </div>
+            <div class="cap-item">
+                <div class="cap-icon">
+                    <svg viewBox="0 0 24 24"><line x1="5" y1="19" x2="5" y2="10"/><line x1="12" y1="19" x2="12" y2="5"/><line x1="19" y1="19" x2="19" y2="13"/></svg>
+                </div>
+                <h3>Monitor</h3>
+                <p>Track data quality, usage and policy compliance</p>
+            </div>
+            <div class="cap-item">
+                <div class="cap-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+                </div>
+                <h3>Audit</h3>
+                <p>Prove compliance with logs, trails and reporting</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ LIFECYCLE TIMELINE ═══════════════════════ -->
+    <section class="timeline-section">
+        <div class="cap-header">
+            <h2>The Lifecycle In Practice</h2>
+            <div class="cap-line"></div>
+        </div>
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-index">STAGE 01</div>
+                <h4>Asset Discovery</h4>
+                <p>Automated scans crawl every connected system to build a single inventory of tables, files and streams — nothing gets governed if it was never found.</p>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-index">STAGE 02</div>
+                <h4>Ownership &amp; Classification</h4>
+                <p>Each dataset is assigned a business owner and a sensitivity tier, which in turn determines what controls automatically apply to it.</p>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-index">STAGE 03</div>
+                <h4>Control Enforcement</h4>
+                <p>Access rules, encryption and masking are applied based on classification — consistently, without waiting on a manual review.</p>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-index">STAGE 04</div>
+                <h4>Continuous Assurance</h4>
+                <p>Quality scorecards and compliance dashboards run on a standing basis, surfacing drift before it becomes an incident.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ KEY PRACTICE AREAS ═══════════════════════ -->
+    <section class="practice-section">
+        <div class="cap-header">
+            <h2>Key Practice Areas</h2>
+            <div class="cap-line"></div>
+        </div>
+
+        <div class="accordion">
+            <details class="acc-item" open>
+                <summary>
+                    <span class="acc-num">01</span>
+                    <span class="acc-title">Quality &amp; Stewardship</span>
+                    <span class="acc-toggle"></span>
+                </summary>
+                <div class="acc-body">
+                    <p>Profiling, cleansing, deduplication and reconciliation keep every source system trustworthy, with named stewards accountable for the outcome rather than the process.</p>
+                    <div class="tag-row">
+                        <span class="tag-chip">Master Data Management</span>
+                        <span class="tag-chip">Quality Scorecards</span>
+                        <span class="tag-chip">Issue Tracking</span>
+                    </div>
+                </div>
+            </details>
+
+            <details class="acc-item">
+                <summary>
+                    <span class="acc-num">02</span>
+                    <span class="acc-title">Privacy &amp; Security</span>
+                    <span class="acc-toggle"></span>
+                </summary>
+                <div class="acc-body">
+                    <p>Classification-driven encryption, masking and role-based access control protect sensitive fields at rest and in motion, with consent handled at the data-subject level.</p>
+                    <div class="tag-row">
+                        <span class="tag-chip">RBAC / ABAC</span>
+                        <span class="tag-chip">Tokenization</span>
+                        <span class="tag-chip">DLP</span>
+                    </div>
+                </div>
+            </details>
+
+            <details class="acc-item">
+                <summary>
+                    <span class="acc-num">03</span>
+                    <span class="acc-title">Compliance &amp; Regulatory</span>
+                    <span class="acc-toggle"></span>
+                </summary>
+                <div class="acc-body">
+                    <p>Retention, disposal and audit-trail requirements are mapped directly onto data classification, so a policy change updates enforcement everywhere at once.</p>
+                    <div class="tag-row">
+                        <span class="tag-chip">GDPR / CCPA</span>
+                        <span class="tag-chip">HIPAA</span>
+                        <span class="tag-chip">ISO 27001</span>
+                        <span class="tag-chip">SOC 2</span>
+                    </div>
+                </div>
+            </details>
+
+            <details class="acc-item">
+                <summary>
+                    <span class="acc-num">04</span>
+                    <span class="acc-title">Metadata &amp; Lineage</span>
+                    <span class="acc-toggle"></span>
+                </summary>
+                <div class="acc-body">
+                    <p>A living catalog and business glossary, combined with end-to-end lineage, make it possible to trace any figure back to the system it originated in.</p>
+                    <div class="tag-row">
+                        <span class="tag-chip">Data Catalog</span>
+                        <span class="tag-chip">Lineage Tracking</span>
+                        <span class="tag-chip">DAMA-DMBOK</span>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ ROLES ═══════════════════════ -->
+    <section class="roles-section">
+        <div class="cap-header">
+            <h2>Roles &amp; Responsibilities</h2>
+            <div class="cap-line"></div>
+        </div>
+
+        <div class="roles-grid">
+            <div class="role-card">
+                <div class="role-avatar-flat" style="background:linear-gradient(135deg,#00a8a8,#0060a8);">DO</div>
+                <h3>Data Owner</h3>
+                <div class="role-eyebrow-flat">Accountable For The Data</div>
+                <p>Usually a business or department lead, accountable for a dataset's accuracy, appropriate use and who is allowed to see it.</p>
+                <ul>
+                    <li>Approves classification levels</li>
+                    <li>Signs off on non-standard access</li>
+                    <li>First escalation point for issues</li>
+                </ul>
+            </div>
+            <div class="role-card">
+                <div class="role-avatar-flat" style="background:linear-gradient(135deg,#0088cc,#00d4aa);">DS</div>
+                <h3>Data Steward</h3>
+                <div class="role-eyebrow-flat">Responsible For The Day-To-Day</div>
+                <p>Keeps catalog entries current, runs quality checks and resolves the issues that automated monitoring flags.</p>
+                <ul>
+                    <li>Applies classification consistently</li>
+                    <li>Maintains catalog and glossary entries</li>
+                    <li>First contact for dataset questions</li>
+                </ul>
+            </div>
+            <div class="role-card">
+                <div class="role-avatar-flat" style="background:linear-gradient(135deg,#2ec4c4,#0a2a4a);">DC</div>
+                <h3>Data Custodian</h3>
+                <div class="role-eyebrow-flat">Manages The Underlying Systems</div>
+                <p>Operates the platforms data lives on, implementing the technical controls that owners and stewards define.</p>
+                <ul>
+                    <li>Configures access and encryption</li>
+                    <li>Maintains backup and retention jobs</li>
+                    <li>Executes incident response steps</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ STANDARDS ═══════════════════════ -->
+    <section class="standards-band">
+        <h2>Standards We Align To</h2>
+        <p class="sub">Frameworks and regulations built into our controls, not bolted on after the fact</p>
+        <div class="chip-row">
+            <div class="std-chip">
+                <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/></svg>
+                <span>GDPR</span>
+            </div>
+            <div class="std-chip">
+                <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <span>HIPAA</span>
+            </div>
+            <div class="std-chip">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+                <span>SOC 2 Type II</span>
+            </div>
+            <div class="std-chip">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+                <span>ISO/IEC 27001</span>
+            </div>
+            <div class="std-chip">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
+                <span>CCPA / CPRA</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (matches about.html) -->
+    <footer>
+      <div class="footer-links">
+        <a href="https://in.linkedin.com/company/digital-core-technologies-pvt-ltd">LinkedIn</a>
+        <a href="https://twitter.com/dicortech">X</a>
+        <a href="https://www.facebook.com/DICORTECH/">Facebook</a>
+        <a href="https://www.youtube.com/@digitalcoretechnologies">Youtube</a>
+      </div>
+      <div class="footer-copy">© Digital Core Technologies Pvt Ltd, 2024</div>
+    </footer>
+
+    <script>
+      (function () {
+        var nav = document.getElementById('site-nav');
+        var toggle = document.getElementById('nav-toggle');
+        if (nav && toggle) {
+          toggle.addEventListener('click', function () {
+            var isOpen = nav.classList.toggle('nav-open');
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          });
+          nav.querySelectorAll('.nav-group a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              nav.classList.remove('nav-open');
+              toggle.setAttribute('aria-expanded', 'false');
+            });
+          });
+          window.addEventListener('resize', function () {
+            if (window.innerWidth > 900) {
+              nav.classList.remove('nav-open');
+              toggle.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+      })();
+
+      // Only one accordion item open at a time
+      (function () {
+        var items = document.querySelectorAll('.acc-item');
+        items.forEach(function (item) {
+          item.addEventListener('toggle', function () {
+            if (item.open) {
+              items.forEach(function (other) {
+                if (other !== item) other.removeAttribute('open');
+              });
+            }
+          });
+        });
+      })();
+    </script>
+</body>
+</html>

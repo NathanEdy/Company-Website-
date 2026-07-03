@@ -37,10 +37,10 @@
     */
     #hero-img-overlay {
       position: absolute;
-      top: 0;
+      top: 64px;
       left: 0;
       width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 64px);
       z-index: 9999;
       overflow: hidden;
       pointer-events: none;
@@ -82,20 +82,20 @@
     @keyframes heroShrinkAndMove {
       /* Full screen */
       0% {
-        top: 0;
+        top: 64px;
         left: 0;
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - 64px);
         border-radius: 0;
         opacity: 1;
       }
 
       /* Still full screen, tiny pause to register */
       5% {
-        top: 0;
+        top: 64px;
         left: 0;
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - 64px);
         border-radius: 0;
         opacity: 1;
       }
@@ -134,19 +134,19 @@
       }
     }
 
-    /* Page content fades in during hero animation only */
-    body.hero-animating #page-content {
-      opacity: 0;
-      animation: pageReveal 0.5s ease 1.9s forwards;
-    }
-
     #page-content {
       opacity: 1;
     }
 
-    @keyframes pageReveal {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    /* Heading text hides only while the overlay is centered on screen (shrink/hold
+       phase); it's revealed once the overlay starts moving away, same as hero-left,
+       so it can never be sitting underneath the image */
+    body.hero-animating .hero-heading {
+      opacity: 0;
+    }
+
+    .hero-heading.visible {
+      animation: heroLeftReveal 0.5s ease forwards;
     }
 
     /* Hidden until overlay animation completes (revealed via JS) */
@@ -187,75 +187,120 @@
 
     /* ─── NAV ─── */
     nav {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+      height: 64px;
+      background: rgba(255,255,255,0.05);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 40px;
-      height: 64px;
-      background: #fff;
-      border-bottom: 1px solid var(--border-light);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+      padding: 0 52px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    .nav-logo {
+    .nav-left-section {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 52px;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
       text-decoration: none;
+      color: var(--dark);
+      flex-shrink: 0;
     }
 
-    .logo-icon {
-      width: 42px;
-      height: 42px;
+    .logo-link svg {
+      width: 38px;
+      height: 38px;
     }
 
-    .logo-text {
+    .logo-wordmark {
       display: flex;
       flex-direction: column;
       line-height: 1.1;
     }
 
-    .logo-text span:first-child {
+    .logo-wordmark .l1 {
       font-family: 'Montserrat', sans-serif;
       font-weight: 700;
-      font-size: 14px;
-      color: var(--dark);
-      letter-spacing: 1px;
-    }
-
-    .logo-text span:last-child {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 400;
-      font-size: 8.5px;
-      color: #888;
-      letter-spacing: 3px;
+      font-size: 28px;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
+      color: var(--dark);
     }
 
-    .nav-links {
+    .nav-group {
       display: flex;
-      gap: 32px;
-      list-style: none;
+      align-items: center;
+      gap: 38px;
     }
 
-    .nav-links a {
+    .nav-group a {
       font-family: 'Montserrat', sans-serif;
-      font-size: 12.5px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.025em;
       color: #333;
       text-decoration: none;
-      letter-spacing: .5px;
       transition: color .2s;
     }
 
-    .nav-links a:hover { color: var(--teal); }
+    nav, .nav-group a, .logo-link {
+      color: #333;
+    }
+
+    .nav-group a:hover { color: #e6b94a; }
+
+    /* ─── NAV: MOBILE TOGGLE (hidden on desktop) ─── */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--dark);
+      position: relative;
+      transition: background .2s;
+    }
+
+    .nav-toggle span::before,
+    .nav-toggle span::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 22px;
+      height: 2px;
+      background: var(--dark);
+      transition: transform .25s ease, top .25s ease, opacity .2s ease;
+    }
+
+    .nav-toggle span::before { top: -7px; }
+    .nav-toggle span::after { top: 7px; }
+
+    nav.nav-open .nav-toggle span { background: transparent; }
+    nav.nav-open .nav-toggle span::before { top: 0; transform: rotate(45deg); }
+    nav.nav-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
 
     /* ─── HERO ─── */
     .hero {
-      padding: 80px 60px 0;
+      padding: 20px 60px 0;
       text-align: center;
       background: linear-gradient(to right, #F5F5F8 50%, #fff 50%);
     }
@@ -574,11 +619,15 @@
       user-select: none;
       white-space: nowrap;
       text-align: center;
+      line-height: 1;
     }
 
     .leader-block.centered .leader-title-bg {
-      left: 53%;
+      left: 50%;
       transform: translateX(-50%);
+      width: 100%;
+      text-align: center;
+      top: 34px;
     }
 
     /* CEO & MD block: header stays on white, paragraph sits on a full-bleed gray band */
@@ -652,6 +701,8 @@
 
     .leader-name-row {
       margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
 
     .leader-role {
@@ -667,8 +718,10 @@
     .leader-name {
       font-family: 'Montserrat', sans-serif;
       font-weight: 700;
-      font-size: 70px;
+      font-size: clamp(28px, 4.5vw, 70px);
       color: #111;
+      position: relative;
+      z-index: 1;
     }
 
     .accent-bar-sm {
@@ -679,11 +732,11 @@
     }
 
     .leader-block.centered .accent-bar-sm {
-      width: 40%;
+      width: 100%;
       height: 1px;
       background: #ccc;
       position: relative;
-      margin: 15px auto 0;
+      margin: 15px 0 0;
     }
 
     .leader-block.centered .accent-bar-sm::after {
@@ -697,7 +750,7 @@
     }
 
     .leader-block.reversed .accent-bar-sm {
-      width: 55%;
+      width: 100%;
       height: 1px;
       background: #ccc;
       position: relative;
@@ -766,13 +819,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 450px;
+      gap: clamp(48px, 10vw, 220px);
       flex-wrap: wrap;
+    }
+
+    /* Fixed-height box centers each logo/badge on a shared baseline,
+       so items of different intrinsic sizes still line up with each other */
+    .partner-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 170px;
     }
 
     .partner-logo img {
       height: 170px;
       width: auto;
+      max-width: 100%;
       object-fit: contain;
       display: block;
     }
@@ -907,6 +970,8 @@
     .footer-links {
       display: flex;
       gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .footer-copy {
@@ -940,32 +1005,265 @@
 
     .footer-links a:hover::after { width: 100%; }
 
-    /* ─── RESPONSIVE ─── */
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE BREAKPOINTS
+       Laptop:  ≤ 1200px   (tighten spacing, scale hero)
+       Tablet:  ≤ 900px    (stack two-column grids, nav still inline but tighter)
+       Mobile:  ≤ 640px    (hamburger nav, single column everything)
+       Small:   ≤ 380px    (extra-tight type)
+       ══════════════════════════════════════════════════════════ */
+
+    /* ─── LAPTOP (≤1200px) ─── */
+    @media (max-width: 1200px) {
+      nav { padding: 0 32px; }
+      .nav-left-section { gap: 34px; }
+      .nav-group { gap: 26px; }
+      .hero { padding: 20px 40px 0; }
+      .hero-body { gap: 40px; margin-top: 70px; margin-bottom: 110px; }
+      .section-divider { margin: 0 40px; }
+      .vmp-section { padding: 70px 40px; }
+      .vmp-grid { gap: 40px; }
+      .values-section { padding: 60px 40px 70px; }
+      .core-letters { gap: 50px; }
+      .leadership-section { padding: 70px 40px; }
+      .leader-block.centered .ceo-bg-band { padding-left: 230px; }
+      .partnerships-section { padding: 50px 40px; }
+      .partner-logo { height: 130px; }
+      .partner-logo img { height: 130px; }
+    }
+
+    /* ─── TABLET (≤900px) ─── */
     @media (max-width: 900px) {
-      nav { padding: 0 20px; }
-      .nav-links { gap: 16px; }
-      .nav-links a { font-size: 11px; }
-      .hero { padding: 50px 20px 0; }
-      .hero-body { grid-template-columns: 1fr; gap: 30px; }
-      .section-divider { margin: 0 20px; }
-      .vmp-section { padding: 50px 20px; }
-      .vmp-grid { grid-template-columns: 1fr; gap: 30px; }
-      .values-section { padding: 50px 20px; }
-      .leadership-section { padding: 50px 20px; }
-      .leader-block { grid-template-columns: 1fr; }
-      .leader-block.reversed { grid-template-columns: 1fr; }
-      .leader-title-bg { font-size: 32px; }
+
+      /* Nav becomes a dropdown.
+         Closed state: nav is a simple 2-item flex row (logo | toggle), with the
+         second link-group wrapper fully removed from flow so the toggle always
+         sits flush right.
+         Open state: nav switches to a 2-column grid; nav-left-section and the
+         second wrapper are set to display:contents so their children (logo,
+         toggle, both link lists) become direct grid items placed by name —
+         no fragile order/space-between math needed. */
+      nav {
+        padding: 0 20px;
+        position: -webkit-sticky;
+        position: sticky;
+      }
+      .nav-left-section { gap: 20px; }
+
+      .nav-toggle { display: flex; }
+
+      .nav-left-section .nav-group {
+        display: none;
+      }
+
+      nav > div:not(.nav-left-section) {
+        display: none;
+      }
+
+      nav.nav-open {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "logo   toggle"
+          "groupA groupA"
+          "groupB groupB";
+        row-gap: 18px;
+        height: auto;
+        padding: 14px 20px 22px;
+        align-items: center;
+      }
+
+      nav.nav-open .nav-left-section {
+        display: contents;
+      }
+
+      nav.nav-open .nav-left-section .logo-link {
+        grid-area: logo;
+      }
+
+      nav.nav-open .nav-left-section .nav-group {
+        grid-area: groupA;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border-light);
+      }
+
+      nav.nav-open .nav-toggle {
+        grid-area: toggle;
+      }
+
+      nav.nav-open > div:not(.nav-left-section) {
+        display: contents;
+      }
+
+      nav.nav-open > div:not(.nav-left-section) .nav-group {
+        grid-area: groupB;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border-light);
+      }
+
+      .nav-group a { font-size: 14px; }
+
+      .logo-wordmark .l1 { font-size: 22px; }
+      .logo-link svg { width: 30px; height: 30px; }
+
+      /* Hero */
+      .hero { padding: 24px 24px 0; }
+      .hero-body {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-top: 40px;
+        margin-bottom: 70px;
+      }
+      .hero-right { order: -1; }
+      .focus-grid { grid-template-columns: 1fr; gap: 28px; }
+      .focus-num { font-size: 56px; }
+
+      .section-divider { margin: 0 24px; }
+
+      /* Vision / Mission / Process */
+      .vmp-section { padding: 50px 24px; }
+      .vmp-grid { grid-template-columns: 1fr; gap: 40px; }
+      .vmp-left { gap: 40px; }
+
+      /* Core Values — 2x2 grid instead of flex-wrap, so items always line
+         up evenly instead of wrapping inconsistently at odd widths */
+      .values-section { padding: 50px 24px 60px; }
+      .core-letters {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px 24px;
+      }
+      .core-letter-wrap { min-width: 0; max-width: none; width: 100%; }
+      .clipped-letter-container { height: 220px; margin-bottom: -20px; }
+      .ghost-letter { font-size: 220px; }
+      .values-bg-word { font-size: clamp(100px, 22vw, 220px); letter-spacing: 10px; }
+
+      /* Leadership */
+      .leadership-section { padding: 50px 24px; }
+
       .leader-block.centered .ceo-bg-band {
-        width: calc(100% + 40px);
-        margin: 0 -20px;
-        padding: 90px 20px 30px;
+        width: calc(100% + 48px);
+        margin: 0 -24px;
+        padding: 90px 24px 40px;
+        text-align: center;
       }
       .leader-block.centered .leader-photo,
       .leader-block.centered .leader-photo-placeholder {
-        left: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        top: -55px;
       }
-      .partnerships-section { padding: 40px 20px; }
-      footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+      .leader-block.centered .leader-info { text-align: center; }
+
+      .leader-block.reversed {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        text-align: center;
+      }
+      .leader-block.reversed .leader-photo,
+      .leader-block.reversed .leader-photo-placeholder {
+        margin: 0 auto;
+        order: -1 !important;
+      }
+      .leader-block.reversed .leader-info { order: 2; }
+      .leader-block.reversed .accent-bar-sm { margin: 15px auto 0; }
+      .leader-block.reversed .leader-name-row br { display: none; }
+
+      .leader-title-bg { font-size: clamp(40px, 16vw, 100px); top: 30px; }
+      .leader-block.reversed .leader-title-bg {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        text-align: center;
+      }
+
+      /* Partnerships */
+      .partnerships-section { padding: 45px 24px; }
+      .partnerships-section h2 { font-size: 28px; }
+      .partners-logos { gap: 48px; }
+      .partner-logo { height: 110px; }
+      .partner-logo img { height: 110px; }
+
+      /* Design Valley */
+      .design-valley { min-height: 500px; }
+    }
+
+    /* ─── MOBILE (≤640px) ─── */
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .logo-wordmark .l1 { font-size: 19px; letter-spacing: 0.06em; }
+      .logo-link svg { width: 26px; height: 26px; }
+      .logo-link { gap: 8px; }
+
+      .hero { padding: 18px 16px 0; }
+      .hero h1 { letter-spacing: 1px; }
+      .hero-body { margin-top: 30px; margin-bottom: 50px; }
+      .hero-left { padding: 20px; }
+      .hero-right-img,
+      .hero-right > div { height: 220px; }
+
+      .section-divider { margin: 0 16px; }
+
+      .vmp-section { padding: 40px 16px; }
+      .vmp-block h2, .vmp-right h2 { font-size: clamp(24px, 8vw, 34px); }
+
+      .values-section { padding: 40px 16px 50px; }
+      .core-letters { gap: 32px 16px; }
+      .clipped-letter-container { height: 130px; margin-bottom: -14px; }
+      .ghost-letter { font-size: 130px; }
+      .value-desc { max-width: none; }
+
+      .leadership-section { padding: 40px 16px; }
+      .leader-name { font-size: clamp(24px, 9vw, 40px); }
+      .leader-block { padding: 36px 0; }
+      .leader-block.centered { padding-top: 36px; }
+      .leader-block.centered .ceo-bg-band {
+        width: calc(100% + 32px);
+        margin: 0 -16px;
+        padding: 80px 16px 32px;
+      }
+      .leader-photo, .leader-photo-placeholder { width: 90px; height: 90px; }
+
+      .partnerships-section { padding: 36px 16px; }
+      .partnerships-section h2 { font-size: 22px; }
+      .partners-logos { gap: 32px; }
+      .partner-logo { height: 80px; }
+      .partner-logo img { height: 80px; }
+      .dt-badge { width: 70px; height: 70px; }
+
+      .design-valley { min-height: 380px; }
+      .design-valley .dv-text { padding: 30px 20px; }
+
+      footer {
+        padding: 20px 16px 56px;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      .footer-links { gap: 16px 20px; }
+      .footer-copy {
+        position: static;
+        text-align: center;
+      }
+    }
+
+    /* ─── SMALL MOBILE (≤380px) ─── */
+    @media (max-width: 380px) {
+      .hero h1 { font-size: 24px; }
+      .focus-num { font-size: 46px; }
+      .values-bg-word { letter-spacing: 6px; }
+      .partners-logos { gap: 24px; }
+      .core-letters { grid-template-columns: 1fr; gap: 20px; }
+      .clipped-letter-container { height: 110px; }
+      .ghost-letter { font-size: 110px; }
     }
 
     /* ─── VMP ANIMATIONS ─── */
@@ -1029,36 +1327,49 @@
 <div id="page-content">
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav>
-  <a href="#" class="nav-logo">
-    <svg class="logo-icon" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="12" width="12" height="12" fill="#00bcd4"/>
-      <rect x="14" y="2" width="12" height="12" fill="#4caf50"/>
-      <rect x="14" y="24" width="12" height="12" fill="#2196f3"/>
-      <rect x="26" y="12" width="12" height="12" fill="#e91e63"/>
-    </svg>
-    <div class="logo-text">
-      <span>DIGITAL CORE</span>
-      <span>TECHNOLOGIES</span>
+<nav id="site-nav">
+  <div class="nav-left-section">
+    <a href="index.html" class="logo-link" aria-label="NEXSUS Home">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="20,20 6,12 6,28 20,36" fill="#2d6be4" opacity="0.9"/>
+        <polygon points="20,20 34,12 34,28 20,36" fill="#22c5b8" opacity="0.9"/>
+        <polygon points="20,4 34,12 20,20 6,12" fill="#a855f7" opacity="0.8"/>
+        <line x1="20" y1="4" x2="20" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+        <line x1="6" y1="12" x2="34" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+        <line x1="34" y1="12" x2="6" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+      </svg>
+      <div class="logo-wordmark">
+        <span class="l1">NEXSUS</span>
+      </div>
+    </a>
+    <div class="nav-group" style="gap:48px;">
+      <a href="software.html">Software</a>
+      <a href="data_governance.html">Data Governance</a>
+      <a href="ux.html">UX</a>
+      <a href="ai.html">AI</a>
     </div>
-  </a>
+  </div>
 
-  <ul class="nav-links">
-    <li><a href="#">Hardware</a></li>
-    <li><a href="#">Software</a></li>
-    <li><a href="#">Logicware</a></li>
-    <li><a href="#">Manufacturing Support</a></li>
-    <li><a href="#">Core Modules</a></li>
-    <li><a href="#">About Us</a></li>
-    <li><a href="#">CSR</a></li>
-    <li><a href="#">News</a></li>
-  </ul>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="site-nav">
+    <span></span>
+  </button>
+
+  <div>
+    <div class="nav-group" style="gap:48px;">
+      <a href="#">Core Modules</a>
+      <a href="about.html">About Us</a>
+      <a href="#">CSR</a>
+      <a href="#">News</a>
+    </div>
+  </div>
 </nav>
 
 <!-- ═══════════ HERO ═══════════ -->
 <section class="hero">
-  <h1>Digital Core Technologies</h1>
-  <p class="subtitle">A Trusted Design Partner For All Electronics Product Development Needs</p>
+  <div class="hero-heading">
+    <h1>Digital Core Technologies</h1>
+    <p class="subtitle">A Trusted Design Partner For All Electronics Product Development Needs</p>
+  </div>
 
   <div class="hero-body">
     <div class="hero-left">
@@ -1193,7 +1504,7 @@
   <div class="leader-block reversed">
     <div class="leader-title-bg">Chairman</div>
     <div class="leader-info">
-      <div class="leader-name-row"><br><br>
+      <div class="leader-name-row">
         <div class="leader-name">S M Balasubramaniyan</div>
         <div class="accent-bar-sm"></div>
       </div>
@@ -1296,6 +1607,7 @@
 
 <script>
   let heroAnimationActive = false;
+  const HEADER_OFFSET_PX = 64;
   const HERO_SHRINK_DURATION_MS = 3360;
   const HERO_HOLD_DURATION_MS = 1500;
   const HERO_MOVE_DURATION_MS = 1400;
@@ -1311,10 +1623,13 @@
   function revealHeroLeftText() {
     const heroLeft = document.querySelector('.hero-left');
     if (heroLeft) heroLeft.classList.add('visible');
+    const heroHeading = document.querySelector('.hero-heading');
+    if (heroHeading) heroHeading.classList.add('visible');
   }
 
   function shouldPlayHeroAnimation() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    if (window.matchMedia('(max-width: 900px)').matches) return false;
 
     const hero = document.querySelector('.hero');
     if (!hero) return window.scrollY < 80;
@@ -1351,6 +1666,8 @@
     revealHeroLeftText();
     const heroLeft = document.querySelector('.hero-left');
     if (heroLeft) heroLeft.style.opacity = '1';
+    const heroHeading = document.querySelector('.hero-heading');
+    if (heroHeading) heroHeading.style.opacity = '1';
   }
 
   function skipHeroAnimation() {
@@ -1377,11 +1694,21 @@
     const targetWidth  = rect.width;
     const targetHeight = rect.height;
 
-    const startTop  = scrollY;
+    const startTop  = scrollY + HEADER_OFFSET_PX;
     const startLeft = scrollX;
 
-    // Mid-point: shrunk to natural size, centered in the current viewport
-    const midTop   = scrollY + (window.innerHeight / 2) - (targetHeight / 2);
+    // Mid-point: shrunk to natural size, centered in the current viewport —
+    // but never allowed to sit higher than just below the heading text, so
+    // the image can't cover the title on shorter (laptop) viewports.
+    const heroHeadingEl = document.querySelector('.hero-heading');
+    let headingSafeTop = startTop;
+    if (heroHeadingEl) {
+      const hRect = heroHeadingEl.getBoundingClientRect();
+      headingSafeTop = hRect.bottom + scrollY + 24;
+    }
+
+    const centeredMidTop = scrollY + (window.innerHeight / 2) - (targetHeight / 2);
+    const midTop  = Math.max(centeredMidTop, headingSafeTop);
     const midLeft  = scrollX + (window.innerWidth  / 2) - (targetWidth  / 2);
 
     const shrinkEnd = heroKeyframePct(HERO_SHRINK_DURATION_MS);
@@ -1396,7 +1723,7 @@
           top: ${startTop}px;
           left: ${startLeft}px;
           width: ${window.innerWidth}px;
-          height: ${window.innerHeight}px;
+          height: ${window.innerHeight - HEADER_OFFSET_PX}px;
           border-radius: 0;
           opacity: 1;
         }
@@ -1404,7 +1731,7 @@
           top: ${startTop}px;
           left: ${startLeft}px;
           width: ${window.innerWidth}px;
-          height: ${window.innerHeight}px;
+          height: ${window.innerHeight - HEADER_OFFSET_PX}px;
           border-radius: 0;
           opacity: 1;
         }
@@ -1535,15 +1862,45 @@
     }
   }
 
+  // ─── MOBILE NAV TOGGLE ───
+  function initNavToggle() {
+    const nav = document.getElementById('site-nav');
+    const toggle = document.getElementById('nav-toggle');
+    if (!nav || !toggle) return;
+
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    // Close the dropdown when a nav link is tapped
+    nav.querySelectorAll('.nav-group a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Close on resize back up to desktop/tablet inline breakpoint
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        nav.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   if (document.readyState === 'complete') {
     initWhenScrollReady();
     initVmpAnimations();
     initCoreAnimations();
+    initNavToggle();
   } else {
     window.addEventListener('pageshow', () => {
       initWhenScrollReady();
       initVmpAnimations();
       initCoreAnimations();
+      initNavToggle();
     }, { once: true });
   }
 </script>
