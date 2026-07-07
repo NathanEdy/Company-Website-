@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Poppins,sans-serif;background:#f5f5f5;color:#222;overflow-x:hidden}
+.container{width:90%;max-width:1400px;margin:auto}
+nav{position:fixed;inset:0 0 auto 0;z-index:200;height:64px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;padding:0 52px;backdrop-filter:blur(8px)}
+.logo-link{display:flex;align-items:center;gap:11px;text-decoration:none;color:#222;flex-shrink:0}
+.nav-left-section{display:flex;align-items:center;gap:52px}
+.logo-link svg{width:38px;height:38px}
+.logo-wordmark{display:flex;flex-direction:column;line-height:1.1}
+.logo-wordmark .l1{font-family:'Barlow','Arial Narrow',Arial,sans-serif;font-weight:700;font-size:28px;letter-spacing:0.09em;text-transform:uppercase}
+.nav-group{display:flex;align-items:center;gap:38px}
+.nav-group a{font-size:15px;font-weight:400;letter-spacing:0.025em;color:#222;text-decoration:none;transition:color .2s}
+.nav-group a:hover{color:#e6b94a}
+.logo{font-size:48px;font-weight:700}
+.logo small{display:block;font-size:18px;font-weight:400}
+.hero{display:flex;align-items:center;justify-content:space-between;padding:64px 0 80px;overflow:hidden}
+.left h1{font-size:100px;letter-spacing:8px;color:#555;text-shadow:0 10px 30px rgba(0,0,0,0.15)}
+.left{margin-top:-800px}
+.left img{max-width:min(600px,100%);height:auto;display:block;margin-bottom:-550px;position:relative;z-index:10}
+.left p{margin-top:40px;font-size:20px;line-height:1.8;max-width:700px}
+ .phone{width:360px;height:700px;transform:rotate(-22deg);background:url('Images/Phone.png') center/cover no-repeat;overflow:hidden;border:none;box-shadow:none}
+.blue{background:#e8f8fb;padding:150px 0;margin-top:-350px}
+.dark{background:linear-gradient(#111,#444);padding:100px 0}
+.pset{display:flex;justify-content:space-between;align-items:center}
+.pset h2{font-size:120px;color:#fff}
+ .monitor{width:520px;height:320px;background:url('Images/Pcscreen.png') center/cover no-repeat;border:none;box-shadow:none}
+.lavender{background:#ece4fb;padding:90px 0}
+.content{display:flex;justify-content:space-between;gap:50px}
+.btn{display:inline-block;margin-top:30px;padding:18px 36px;border:2px solid #333;border-radius:40px;text-decoration:none;color:#222}
+footer{background:#000;color:#ddd;padding:80px 0}
+.footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:60px}
+.footer h3{margin-bottom:20px}
+.footer ul{list-style:none}
+.footer li{margin:10px 0}
+.social{display:flex;gap:15px;margin-top:30px}
+.circle{width:50px;height:50px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:700}
+.copy{text-align:center;margin-top:60px;color:#888}
+@media(max-width:900px){
+nav,.hero,.pset,.content,.footer{flex-direction:column}
+.left h1,.pset h2{font-size:64px}
+.menu{flex-wrap:wrap;justify-content:center}
+.phone,.monitor{width:100%;max-width:420px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left-section">
+    <a href="index.html" class="logo-link" aria-label="NEXSUS Home">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="20,20 6,12 6,28 20,36" fill="#2d6be4" opacity="0.9"/>
+        <polygon points="20,20 34,12 34,28 20,36" fill="#22c5b8" opacity="0.9"/>
+        <polygon points="20,4 34,12 20,20 6,12" fill="#a855f7" opacity="0.8"/>
+        <line x1="20" y1="4" x2="20" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+        <line x1="6" y1="12" x2="34" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+        <line x1="34" y1="12" x2="6" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+      </svg>
+      <div class="logo-wordmark">
+        <span class="l1">NEXSUS</span>
+      </div>
+    </a>
+    <div class="nav-group" style="gap:48px;">
+      <a href="software.html">Software</a>
+      <a href="#">Data Governance</a>
+      <a href="#">UX</a>
+      <a href="ai.html">AI</a>
+    </div>
+  </div>
+  <div>
+    <div class="nav-group" style="gap:48px;">
+      <a href="core-modules.html">Core Modules</a>
+      <a href="#">About Us</a>
+      <a href="#">CSR</a>
+      <a href="#">News</a>
+    </div>
+  </div>
+</nav>
+
+<section class="container hero">
+<div class="left">
+<img src="Images/Paragon_Text.png" alt="PARAGON">
+</div>
+<div class="phone"></div>
+</section>
+
+<section class="blue">
+<div class="container">
+<p style="font-size:20px;line-height:1.9;max-width:1000px;">
+Paragon ERP eliminates disconnected processes, improves data accuracy and provides the visibility organisations need to adapt and grow. This placeholder section mirrors the light blue information block shown in the reference design.
+</p>
+</div>
+</section>
+
+<section class="dark">
+<div class="container pset">
+<h2>PSET</h2>
+<div class="monitor"></div>
+</div>
+</section>
+
+<section class="lavender">
+<div class="container content">
+<div style="max-width:700px">
+<p style="font-size:20px;line-height:1.9">
+PSET helps education providers simplify administration, improve operational efficiency and gain better visibility across institutional processes. It connects key functions through one digital platform, helping institutions enhance service delivery and support student success.
+</p>
+</div>
+<div>
+<a class="btn" href="#">Request a Demo →</a>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="container footer">
+<div>
+<div class="logo" style="font-size:42px;color:#fff">NEXSUS</div>
+<div class="social">
+<div class="circle">in</div>
+<div class="circle">f</div>
+<div class="circle">ig</div>
+</div>
+</div>
+<div>
+<h3>Navigation</h3>
+<ul><li>Home</li><li>About Us</li><li>Services</li><li>Products</li><li>Contact Us</li></ul>
+</div>
+<div>
+<h3>Contact Us</h3>
+<p>+27 41 582 4582</p>
+<p>info@profecia.co.za</p>
+<br>
+<h3>Location</h3>
+<p>Building 7, Ascot Office Park</p>
+<p>6 Conyngham Road</p>
+<p>Parsons Hill, Gqeberha 6001</p>
+</div>
+</div>
+<div class="copy">© 2026 NEXSUS. All Rights Reserved.</div>
+</footer>
+
+</body>
+</html>
