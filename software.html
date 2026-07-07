@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Core Technologies - Software</title>
+    <!-- Link to Google Fonts to match index.html -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* ─────────────────────────── NAV (from index.html) ─────────────────────────── */
+        nav {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 200;
+            height: 64px; /* --nav-h from index.html */
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 52px;
+        }
+        .logo-link { display: flex; align-items: center; gap: 11px; text-decoration: none; color: #fff; flex-shrink: 0; }
+        .nav-left-section { display: flex; align-items: center; gap: 52px; }
+        .logo-link svg { width: 38px; height: 38px; }
+        .logo-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+        .logo-wordmark .l1 {
+            font-family: 'Barlow', 'Arial Narrow', Arial, sans-serif;
+            font-weight: 700; font-size: 28px;
+            letter-spacing: 0.09em; text-transform: uppercase;
+        }
+        .nav-group { display: flex; align-items: center; gap: 38px; }
+        .nav-group a {
+            /* Use Inter font to match index.html */
+            font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.025em;
+            color: #fff; text-decoration: none; transition: color .2s;
+        }
+        .nav-group a:hover { color: #e6b94a; /* --gold */ }
+
+        /* Since this page has a light theme, we need to override link colors */
+        nav, .nav-group a, .logo-link {
+            color: #333;
+        }
+        nav {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 144px 60px 60px; /* Increased top padding to account for fixed nav */
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .hero-bg-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            font-weight: 900;
+            color: rgba(200,200,200,0.2);
+            white-space: nowrap;
+            letter-spacing: 10px;
+            z-index: 0;
+            user-select: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 900;
+            color: #000;
+            display: inline-block;
+            margin-right: 20px;
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInFromLeft 1.2s ease-out forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 48px;
+            font-weight: 300;
+            color: #333;
+            letter-spacing: 3px;
+            display: inline-block;
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInFromLeft 1.2s ease-out 0.3s forwards;
+        }
+
+        .hero-line {
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ffcc00);
+            margin: 30px auto;
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInFromLeft 1.2s ease-out 0.6s forwards;
+        }
+
+        @keyframes slideInFromLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-150px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* DMTP Section */
+        .dmtp-section {
+            padding: 60px;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            position: relative;
+        }
+
+        .dmtp-item {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            position: relative;
+            padding-left: 20px;
+            border-left: 3px solid #00a8a8;
+        }
+
+        .dmtp-letter {
+            font-size: 140px;
+            font-weight: 900;
+            color: rgba(200,200,200,0.3);
+            line-height: 1;
+            position: absolute;
+            left: -10px;
+            top: -20px;
+            z-index: 0;
+        }
+
+        .dmtp-content {
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
+        }
+
+        .dmtp-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dmtp-desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Tech Expertise Diagram */
+        .tech-section {
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .tech-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+        }
+
+        .tech-diagram {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 500px;
+        }
+
+        .tech-node {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 2px solid #00a8a8;
+            background: rgba(240,248,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tech-node.center {
+            width: 100px;
+            height: 100px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border: 2px solid #00a8a8;
+        }
+
+        .node-1 { left: 5%; top: 10%; }
+        .node-2 { left: 25%; top: 5%; }
+        .node-3 { left: 45%; top: 25%; }
+        .node-4 { left: 55%; top: 0%; }
+        .node-5 { left: 70%; top: 5%; }
+        .node-6 { left: 85%; top: 30%; }
+        .node-7 { left: 70%; top: 55%; }
+        .node-8 { left: 45%; top: 65%; }
+        .node-9 { left: 20%; top: 55%; }
+
+        .tech-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 2px;
+            background: #fff;
+            padding: 5px 10px;
+        }
+
+        .label-1 { left: 15%; top: 35%; }
+        .label-2 { left: 35%; top: 45%; }
+        .label-3 { left: 60%; top: 40%; }
+        .label-4 { left: 75%; top: 50%; }
+
+        /* SVG Lines */
+        .tech-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .tech-lines line {
+            stroke: #00a8a8;
+            stroke-width: 1.5;
+        }
+
+        /* Key Areas Section */
+        .key-areas {
+            padding: 60px;
+            background: #fff;
+        }
+
+        .key-areas-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .key-areas-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .key-areas-line {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #0088cc, #00d4aa);
+            margin: 0 auto;
+        }
+
+        .areas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .area-block {
+            padding: 30px;
+        }
+
+        .area-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .area-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+
+        .area-accent {
+            width: 120px;
+            height: 20px;
+            background: linear-gradient(90deg, #0088cc, #00d4aa);
+            border-radius: 2px;
+        }
+
+        .area-list {
+            list-style: none;
+        }
+
+        .area-list li {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .area-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .area-list ul {
+            list-style: none;
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        .area-list ul li::before {
+            content: '○';
+            font-size: 10px;
+        }
+
+        /* Center Decoration */
+        .center-decoration {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .dec-circle {
+            width: 80px;
+            height: 80px;
+            border: 3px solid #00a8a8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .dec-circle.small {
+            width: 50px;
+            height: 50px;
+            border-width: 2px;
+        }
+
+        .dec-line {
+            width: 2px;
+            height: 40px;
+            background: #ddd;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dmtp-section {
+                flex-wrap: wrap;
+            }
+            .areas-grid {
+                grid-template-columns: 1fr;
+            }
+            .tech-diagram {
+                height: auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+            .tech-node {
+                position: relative;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+            }
+            .tech-lines, .tech-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+      <div class="nav-left-section">
+        <a href="index.html" class="logo-link" aria-label="NEXSUS Home">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,20 6,12 6,28 20,36" fill="#2d6be4" opacity="0.9"></polygon><polygon points="20,20 34,12 34,28 20,36" fill="#22c5b8" opacity="0.9"></polygon><polygon points="20,4 34,12 20,20 6,12" fill="#a855f7" opacity="0.8"></polygon><line x1="20" y1="4" x2="20" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"></line><line x1="6" y1="12" x2="34" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"></line><line x1="34" y1="12" x2="6" y2="28" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"></line></svg>
+          <div class="logo-wordmark">
+            <span class="l1">NEXSUS</span>
+          </div>
+        </a>
+        <div class="nav-group" style="gap:48px;">
+          <a href="software.html">Software</a>
+          <a href="#">Data Governance</a>
+          <a href="#">UX</a>
+          <a href="ai.html">AI</a>
+        </div>
+      </div>
+      <div>
+        <div class="nav-group" style="gap:48px;">
+          <a href="core-modules.html">Core Modules</a>
+          <a href="#">About Us</a>
+          <a href="#">CSR</a>
+          <a href="#">News</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg-text">QUALITY BY DESIGN</div>
+        <div class="hero-content">
+            <h1 class="hero-title">SOFTWARE</h1>
+            <span class="hero-subtitle">DESIGN SERVICES</span>
+            <div class="hero-line"></div>
+        </div>
+    </section>
+
+    <!-- DMTP Section -->
+    <section class="dmtp-section">
+        <div class="dmtp-item">
+            <div class="dmtp-letter">D</div>
+            <div class="dmtp-content">
+                <div class="dmtp-title">Design & Development</div>
+                <div class="dmtp-desc">Complete Product Development Solution from Concept to Deployment</div>
+            </div>
+        </div>
+        <div class="dmtp-item">
+            <div class="dmtp-letter">M</div>
+            <div class="dmtp-content">
+                <div class="dmtp-title">Maintenance and Optimizations</div>
+                <div class="dmtp-desc">Bug tracking, software upgrades, feature enhancements, and Performance Optimization as required for product maintenance</div>
+            </div>
+        </div>
+        <div class="dmtp-item">
+            <div class="dmtp-letter">T</div>
+            <div class="dmtp-content">
+                <div class="dmtp-title">Product Testing and Validation Suites</div>
+                <div class="dmtp-desc">Test framework design and development required for product hardware and software validations</div>
+            </div>
+        </div>
+        <div class="dmtp-item">
+            <div class="dmtp-letter">P</div>
+            <div class="dmtp-content">
+                <div class="dmtp-title">OS /Platform Porting/ Device Driver Development</div>
+                <div class="dmtp-desc">Porting the software solutions across multiple hardware platforms in Linux, Windows, and Real-Time OS</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Expertise Diagram -->
+    <section class="tech-section">
+        <div class="tech-title">TECHNOLOGY EXPERTISE</div>
+        <div class="tech-diagram">
+            <svg class="tech-lines" viewBox="0 0 1200 500">
+                <!-- Connecting lines between nodes -->
+                <line x1="130" y1="130" x2="280" y2="100" />
+                <line x1="280" y1="100" x2="500" y2="200" />
+                <line x1="130" y1="130" x2="200" y2="350" />
+                <line x1="200" y1="350" x2="380" y2="400" />
+                <line x1="380" y1="400" x2="500" y2="200" />
+                <line x1="500" y1="200" x2="620" y2="100" />
+                <line x1="620" y1="100" x2="750" y2="80" />
+                <line x1="750" y1="80" x2="900" y2="130" />
+                <line x1="900" y1="130" x2="850" y2="300" />
+                <line x1="850" y1="300" x2="950" y2="250" />
+                <line x1="500" y1="200" x2="650" y2="350" />
+                <line x1="650" y1="350" x2="850" y2="300" />
+            </svg>
+
+            <div class="tech-node node-1">THERMAL/ CMOS / CCD IMAGING</div>
+            <div class="tech-node node-2">BSP / DRIVERS FOR LINUX & RTOS</div>
+            <div class="tech-node node-3">IOT / CLOUD</div>
+            <div class="tech-node node-4">AUTOMOTIVE SOLUTIONS</div>
+            <div class="tech-node node-5">IMAGE SENSOR TUNING / ISP</div>
+            <div class="tech-node node-6">AI/ML</div>
+            <div class="tech-node node-7">UI/UX, WEB AND APP DEVELOPMENT</div>
+            <div class="tech-node node-8">GRAPHICS / MULTIMEDIA</div>
+            <div class="tech-node node-9">IP / NETWORKING</div>
+
+            <div class="tech-label label-1">TECHNOLOGY EXPERTISE</div>
+            <div class="tech-label label-2">TECHNOLOGY EXPERTISE</div>
+            <div class="tech-label label-3">TECHNOLOGY EXPERTISE</div>
+            <div class="tech-label label-4">TECHNOLOGY EXPERTISE</div>
+        </div>
+    </section>
+
+    <!-- Key Areas Section -->
+    <section class="key-areas">
+        <div class="key-areas-header">
+            <div class="key-areas-title">KEY AREAS</div>
+            <div class="key-areas-line"></div>
+        </div>
+
+        <div class="areas-grid">
+            <div class="area-block">
+                <div class="area-header">
+                    <div class="area-title">APPLICATION SOFTWARE</div>
+                    <div class="area-accent"></div>
+                </div>
+                <ul class="area-list">
+                    <li>Full Stack Development (Python and JavaScript)</li>
+                    <li>Application development in Linux, Windows, Android, iOS, uCOS and RTOS</li>
+                    <li>Embedded GUI based on QT and GTK</li>
+                    <li>Desktop applications with C#, QT, JavaFX and GTK</li>
+                    <li>Web GUI with HTML, CSS, JavaScript, Angular, Vue and React</li>
+                    <li>UI/UX design</li>
+                    <li>Mobile Apps based on Android (Java and Kotlin), iOS (Swift) and Hybrid (Flutter)</li>
+                    <li>Cloud – AWS, GCP and DigitalOcean</li>
+                    <li>Backed APIs with Node JS, Nest JS, C# and Python (Django DRF and FastAPI)</li>
+                    <li>AI/ML : Python, TensorFlow, Keras, Yolo, OpenCV etc.</li>
+                </ul>
+            </div>
+
+            <div class="area-block">
+                <div class="area-header">
+                    <div class="area-title">MIDDLEWARE</div>
+                    <div class="area-accent"></div>
+                </div>
+                <ul class="area-list">
+                    <li>Typical solutions related to Video, Audio, Energy Management, Industrial IoT, and Networking with Interactive GUI.</li>
+                    <li>Embedded Linux Application utilizing the multiple process synchronization and communication methods</li>
+                    <li>Development frameworks using Yocto, Buildroot etc</li>
+                    <li>Video/Audio libraries - FFmpeg, Gstreamer, V4l2, ALSA, OpenCV, Live555 etc</li>
+                    <li>Networking Protocols – TCP/IP, UDP, FTP, L2/L3 protocols</li>
+                    <li>Connectivity Protocols – WIFI/BLE/Zigbee/NFC/RF</li>
+                    <li>Streaming Protocols – RTSP, RTMP/HLS/WebRTC</li>
+                    <li>Graphics Framework – OpenGL/OpenCL/Weston/Wayland/X11</li>
+                    <li>IOT Framework – MQTT/COAP</li>
+                    <li>Webserver Integration using Lighttpd, NodeJS</li>
+                </ul>
+            </div>
+
+            <div class="area-block">
+                <div class="area-header">
+                    <div class="area-title">DEVICE/PLATFORM DRIVERS</div>
+                    <div class="area-accent"></div>
+                </div>
+                <ul class="area-list">
+                    <li>Embedded Linux
+                        <ul>
+                            <li>Device drivers based on bus interfaces like I2C, SPI, USB, PCI, UART, Gigabit Ethernet, CAN, ULPI</li>
+                            <li>Network stack – Ethernet, Wifi, Bluetooth etc</li>
+                            <li>Camera driver Implementation and integration to V4l2 framework – MIPI/CSI/Parallel</li>
+                            <li>Linux audio driver and integration to ALSA framework</li>
+                            <li>Display drivers – HDMI/MIPI DSI/DVI/VGA/Thunderbolt/USB</li>
+                            <li>DMA/Memory Drivers – AXI/PCI Express/NVMe/Flexbus</li>
+                        </ul>
+                    </li>
+                    <li>Windows driver development</li>
+                </ul>
+            </div>
+
+            <div class="area-block">
+                <div class="area-header">
+                    <div class="area-title">BSP</div>
+                    <div class="area-accent"></div>
+                </div>
+                <ul class="area-list">
+                    <li>Platforms
+                        <ul>
+                            <li>NXP – IMXseries, QorIQ Layerscape, ARM based Micro-controllers</li>
+                            <li>TI- Multimedia/Application processors</li>
+                            <li>Intel – x86 Xilinx – Zync 7xxx PSOC Microchip – Polarfire RISC-V SOC, LAN9668 switch SOC</li>
+                            <li>Mediatek – Genio 700</li>
+                            <li>Rockchip - RK3288, RK3399</li>
+                        </ul>
+                    </li>
+                    <li>SDK development and porting for custom hardware design
+                        <ul>
+                            <li>BareMetal</li>
+                            <li>Linux</li>
+                            <li>FreeRTOS</li>
+                        </ul>
+                    </li>
+                    <li>Bootloader Development
+                        <ul>
+                            <li>Uboot</li>
+                            <li>UEFI</li>
+                        </ul>
+                    </li>
+                    <li>Hardware Bring up and Validation</li>
+                    <li>Test-suite development for hardware interface validation</li>
+                    <li>Boot Optimization</li>
+                    <li>OS upgrade</li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">LinkedIn</a>
+            <a href="#">X</a>
+            <a href="#">Facebook</a>
+            <a href="#">Youtube</a>
+        </div>
+        <div class="footer-copy">&copy; Digital Core Pvt Ltd, 2024</div>
+    </footer>
+</body>
+</html>
