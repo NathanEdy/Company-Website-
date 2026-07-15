@@ -7,7 +7,7 @@
     <!-- Link to Google Fonts to match index.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <style>
         * {
             margin: 0;
@@ -16,10 +16,17 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: #fff;
             color: #333;
             overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .hero-title, .hero-subtitle, .hero-eyebrow,
+        .logo-wordmark .l1, .process-title, .process-headline,
+        .cap-header h2, .cap-item h3, .tl-index, .acc-title,
+        .role-card h3, .standards-band h2, .footer-copy {
+            font-family: 'Montserrat', sans-serif;
         }
 
         /* ─────────────────────────── NAV (from index.html) ─────────────────────────── */
@@ -446,8 +453,9 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="shared-nav.css" />
 </head>
-<body>
+<body class="light-page">
     <!-- Navigation -->
     <nav>
       <div class="nav-left-section">
@@ -458,18 +466,17 @@
           </div>
         </a>
         <div class="nav-group" style="gap:48px;">
-          <a href="software.html">Software</a>
+          <a href="software.html" class="active">Software</a>
           <a href="data_governance.html">Data Governance</a>
-          <a href="ux.html">UX</a>
+          <a href="ux.html">User Experience</a>
           <a href="ai.html">AI</a>
         </div>
       </div>
       <div>
         <div class="nav-group" style="gap:48px;">
-          <a href="core-modules.html">Core Modules</a>
           <a href="about.html">About Us</a>
-          <a href="#">CSR</a>
-          <a href="#">News</a>
+          <a href="products.html">Products</a>
+          <a href="#">Contact us</a>
         </div>
       </div>
     </nav>
